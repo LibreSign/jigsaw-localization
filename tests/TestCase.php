@@ -3,6 +3,7 @@
 namespace Tests;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use TightenCo\Jigsaw\Container;
 
 // use TightenCo\Jigsaw\File\ConfigFile;
 
@@ -14,8 +15,7 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        require __DIR__.'/../vendor/tightenco/jigsaw/jigsaw-core.php';
-        $this->app = $container;
+        $this->app = new Container;
 
         // $this->app->bind('config', function ($c) use ($cachePath) {
         //     $config = (new ConfigFile($c['cwd'] . '/config.php', $c['cwd'] . '/helpers.php'))->config;
