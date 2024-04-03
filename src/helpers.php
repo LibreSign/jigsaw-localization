@@ -9,7 +9,6 @@
 
 /**
  * @param  mixed  $page
- * @param  string  $text
  * @param  ?string  $current_locale
  * @return string The translated text if found, else returns the same given $text
  */
@@ -44,7 +43,7 @@ function current_path_locale($page): string
 
 /**
  * @param  mixed  $page
- * @param  ?string  $target_locale set to the default locale if null
+ * @param  ?string  $target_locale  set to the default locale if null
  * @return string Places $target_locale code in the current path
  */
 function translate_path($page, ?string $target_locale = null): string
@@ -66,7 +65,7 @@ function translate_path($page, ?string $target_locale = null): string
 
 /**
  * @param  mixed  $page
- * @param  ?string  $target_locale set to the default locale if null
+ * @param  ?string  $target_locale  set to the default locale if null
  * @return string Places $target_locale code in the current url
  */
 function translate_url($page, ?string $target_locale = null): string
@@ -76,8 +75,8 @@ function translate_url($page, ?string $target_locale = null): string
 
 /**
  * @param  mixed  $page
- * @param  string  $partial_path A path without the language prefix
- * @param  ?string  $target_locale uses the default locale if null
+ * @param  string  $partial_path  A path without the language prefix
+ * @param  ?string  $target_locale  uses the default locale if null
  * @return string A path on the target locale
  */
 function locale_path($page, string $partial_path, ?string $target_locale = null): string
@@ -94,8 +93,8 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
 
 /**
  * @param  mixed  $page
- * @param  string  $partial_path A path without the language prefix
- * @param  ?string  $target_locale uses the default locale if null
+ * @param  string  $partial_path  A path without the language prefix
+ * @param  ?string  $target_locale  uses the default locale if null
  * @return string A URL on the target locale
  */
 function locale_url($page, string $partial_path, ?string $target_locale = null): string
