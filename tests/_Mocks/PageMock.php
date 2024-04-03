@@ -12,11 +12,6 @@ class PageMock
 
     public array $localization = [];
 
-    public function __construct()
-    {
-        $this->defaultLocale = packageDefaultLocale();
-    }
-
     public function setPath(string $path): static
     {
         $this->path = '/'.trim($path, '/');
