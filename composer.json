@@ -19,7 +19,7 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
-        "tightenco/jigsaw": "^1.4"
+        "tightenco/jigsaw": "^1.7"
     },
     "autoload": {
         "files": [
