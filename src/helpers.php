@@ -9,7 +9,6 @@
 
 /**
  * @param  mixed  $page
- * @param  string  $text
  * @param  ?string  $current_locale
  * @return string The translated text if found, else returns the same given $text
  */
@@ -29,8 +28,6 @@ function current_path_locale($page): string
 {
     $path = trim($page->getPath(), '/');
 
-    $default_locale = $page->defaultLocale ?? packageDefaultLocale();
-
     /**
      * - [a-z]{2,3} language code
      * - [A-Z]{2} region code
@@ -41,12 +38,12 @@ function current_path_locale($page): string
 
     preg_match($locale_regex, $path, $matches);
 
-    return $matches['locale'] ?? $default_locale;
+    return $matches['locale'] ?? packageDefaultLocale();
 }
 
 /**
  * @param  mixed  $page
- * @param  ?string  $target_locale set to the default locale if null
+ * @param  ?string  $target_locale  set to the default locale if null
  * @return string Places $target_locale code in the current path
  */
 function translate_path($page, ?string $target_locale = null): string
@@ -56,19 +53,19 @@ function translate_path($page, ?string $target_locale = null): string
     $current_locale = current_path_locale($page);
 
     $partial_path = match (true) {
-        $current_locale === $page->defaultLocale => $page->getPath(),
+        $current_locale === packageDefaultLocale($page) => $page->getPath(),
         default => substr($page->getPath(), strlen($current_locale) + 1),
     };
 
     return match (true) {
-        $target_locale === $page->defaultLocale => "{$partial_path}",
+        $target_locale === packageDefaultLocale($page) => "{$partial_path}",
         default => "/{$target_locale}{$partial_path}",
     };
 }
 
 /**
  * @param  mixed  $page
- * @param  ?string  $target_locale set to the default locale if null
+ * @param  ?string  $target_locale  set to the default locale if null
  * @return string Places $target_locale code in the current url
  */
 function translate_url($page, ?string $target_locale = null): string
@@ -78,8 +75,8 @@ function translate_url($page, ?string $target_locale = null): string
 
 /**
  * @param  mixed  $page
- * @param  string  $partial_path A path without the language prefix
- * @param  ?string  $target_locale uses the default locale if null
+ * @param  string  $partial_path  A path without the language prefix
+ * @param  ?string  $target_locale  uses the default locale if null
  * @return string A path on the target locale
  */
 function locale_path($page, string $partial_path, ?string $target_locale = null): string
@@ -89,15 +86,15 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
     $partial_path = '/'.trim($partial_path, '/');
 
     return match (true) {
-        $target_locale === $page->defaultLocale => $partial_path,
+        $target_locale === packageDefaultLocale($page) => $partial_path,
         default => "/{$target_locale}{$partial_path}"
     };
 }
 
 /**
  * @param  mixed  $page
- * @param  string  $partial_path A path without the language prefix
- * @param  ?string  $target_locale uses the default locale if null
+ * @param  string  $partial_path  A path without the language prefix
+ * @param  ?string  $target_locale  uses the default locale if null
  * @return string A URL on the target locale
  */
 function locale_url($page, string $partial_path, ?string $target_locale = null): string
