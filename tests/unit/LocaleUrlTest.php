@@ -1,19 +1,23 @@
 <?php
 
-use ElaborateCode\JigsawLocalization\Mocks\PageMock;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
 
-it('sets URL with base path on DEFAULT_LOCALE for partial path', function () {
-    $this->app->config = collect(['baseUrl' => 'https://elaboratecode.com/packages']);
+final class LocaleUrlTest extends TestCase
+{
+    #[DataProvider('providerLocaleUrl')]
+    public function testLocaleUrl(string $path, ?string $locale, string $expected): void
+    {
+        $this->app->config = collect(['baseUrl' => 'https://elaboratecode.com/packages']);
+        $actual = locale_url($this->pageData, $path, $locale);
+        $this->assertEquals($expected, $actual);
+    }
 
-    $page = new PageMock;
-
-    expect(locale_url($page, 'blog'))->toBe('https://elaboratecode.com/packages/blog');
-});
-
-it('sets URL with base path on locale for partial path', function () {
-    $this->app->config = collect(['baseUrl' => 'https://elaboratecode.com/packages']);
-
-    $page = new PageMock;
-
-    expect(locale_url($page, 'blog', 'ar'))->toBe('https://elaboratecode.com/packages/ar/blog');
-});
+    public static function providerLocaleUrl(): array
+    {
+        return [
+            ['blog', null, 'https://elaboratecode.com/packages/blog'],
+            ['blog', 'ar', 'https://elaboratecode.com/packages/ar/blog'],
+        ];
+    }
+}

@@ -1,30 +1,27 @@
 <?php
 
-use ElaborateCode\JigsawLocalization\Mocks\PageMock;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
 
-it('returns DEFAULT_LOCALE code', function () {
-    expect([
-        current_path_locale((new PageMock)->setPath('/')),
-        current_path_locale((new PageMock)->setPath('/blog')),
-    ])
-        ->each
-        ->toBe(packageDefaultLocale());
-});
+final class CurrentPathLocaleTest extends TestCase
+{
+    #[DataProvider('providerLanguageCode')]
+    public function testLanguageCode($path, $expected): void
+    {
+        $this->pageData->setPath($path);
+        $actual = current_path_locale($this->pageData);
+        $this->assertEquals($expected, $actual);
+    }
 
-it('returns language code', function () {
-    expect([
-        current_path_locale((new PageMock)->setPath('/es')),
-        current_path_locale((new PageMock)->setPath('/es/blog')),
-    ])
-        ->each
-        ->toBe('es');
-});
-
-it('returns language+region code', function () {
-    expect([
-        current_path_locale((new PageMock)->setPath('/haw-US')),
-        current_path_locale((new PageMock)->setPath('/haw-US/blog')),
-    ])
-        ->each
-        ->toBe('haw-US');
-});
+    public static function providerLanguageCode(): array
+    {
+        return [
+            ['/', packageDefaultLocale()],
+            ['/blog', packageDefaultLocale()],
+            ['/es', 'es'],
+            ['/es/blog', 'es'],
+            ['/raw-US', 'raw-US'],
+            ['/raw-US/blog', 'raw-US'],
+        ];
+    }
+}
