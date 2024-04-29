@@ -6,7 +6,8 @@ use Tests\TestCase;
 final class LocalePathTest extends TestCase
 {
     #[DataProvider('providerLocalePath')]
-    public function testLocalePath(string $path, ?string $locale, string $expected) {
+    public function testLocalePath(string $path, ?string $locale, string $expected)
+    {
         $actual = locale_path($this->pageData, $path, $locale);
         $this->assertEquals($expected, $actual);
     }

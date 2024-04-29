@@ -9,6 +9,7 @@ use TightenCo\Jigsaw\Container;
 class TestCase extends BaseTestCase
 {
     public PageMock $pageData;
+
     public $app;
 
     protected function setUp(): void
