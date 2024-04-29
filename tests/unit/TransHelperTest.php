@@ -1,20 +1,28 @@
 <?php
 
-use ElaborateCode\JigsawLocalization\Mocks\PageMock;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
 
-it('translates', function () {
-    $page = (new PageMock)
-        ->setLocalization([
-            'es' => [
-                'Cat' => 'Gato',
-            ],
-        ]);
+final class TransHelperTest extends TestCase
+{
+    #[DataProvider('provider__')]
+    public function test__(string $text, ?string $locale, string $expected): void
+    {
+        $this->pageData
+            ->setLocalization([
+                'es' => [
+                    'Cat' => 'Gato',
+                ],
+            ]);
+        $actual = __($this->pageData, $text, $locale);
+        $this->assertEquals($expected, $actual);
+    }
 
-    expect(__($page, 'Cat', 'es'))->toBe('Gato');
-});
-
-it('returns the given text when no translation is found', function () {
-    $page = (new PageMock);
-
-    expect(__($page, 'Dog', 'es'))->toBe('Dog');
-});
+    public static function provider__(): array
+    {
+        return [
+            ['Cat', 'es', 'Gato'],
+            ['Dog', 'es', 'Dog'],
+        ];
+    }
+}

@@ -1,15 +1,22 @@
 <?php
 
-use ElaborateCode\JigsawLocalization\Mocks\PageMock;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
 
-it('sets path on DEFAULT_LOCALE for partial path', function () {
-    $page = new PageMock;
+final class LocalePathTest extends TestCase
+{
+    #[DataProvider('providerLocalePath')]
+    public function testLocalePath(string $path, ?string $locale, string $expected)
+    {
+        $actual = locale_path($this->pageData, $path, $locale);
+        $this->assertEquals($expected, $actual);
+    }
 
-    expect(locale_path($page, 'blog'))->toBe('/blog');
-});
-
-it('sets path on locale for partial path', function () {
-    $page = new PageMock;
-
-    expect(locale_path($page, 'blog', 'ar'))->toBe('/ar/blog');
-});
+    public static function providerLocalePath(): array
+    {
+        return [
+            ['blog', null, '/blog'],
+            ['blog', 'ar', '/ar/blog'],
+        ];
+    }
+}
