@@ -9,7 +9,6 @@
 
 /**
  * @param  mixed  $page
- * @param  ?string  $current_locale
  * @return string The translated text if found, else returns the same given $text
  */
 function __($page, string $text, ?string $current_locale = null): string

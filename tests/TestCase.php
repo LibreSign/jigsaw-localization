@@ -16,7 +16,7 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->pageData = new PageMock();
+        $this->pageData = new PageMock;
         $this->app = Container::getInstance();
     }
 }
