@@ -29,12 +29,12 @@ function current_path_locale($page): string
     $path = trim($page->getPath(), '/');
 
     /**
-     * - [a-z]{2,3} language code
+     * - [a-z]{2} language code
      * - [A-Z]{2} region code
      *
      * @var string $locale_regex
      */
-    $locale_regex = '/^(?<locale>(?:[a-z]{2,3}-[A-Z]{2})|(?:[a-z]{2,3}))(?:[^a-zA-Z]|$)/';
+    $locale_regex = '/^(?<locale>(?:[a-z]{2}-[A-Z]{2})|(?:[a-z]{2}))(?:[^a-zA-Z]|$)/';
 
     preg_match($locale_regex, $path, $matches);
 
