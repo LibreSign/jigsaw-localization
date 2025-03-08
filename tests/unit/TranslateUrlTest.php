@@ -6,7 +6,7 @@ use Tests\TestCase;
 final class TranslateUrlTest extends TestCase
 {
     #[DataProvider('providerTranslateUrl')]
-    public function testTranslateUrl(string $path, ?string $locale, string $expected): void
+    public function test_translate_url(string $path, ?string $locale, string $expected): void
     {
         $this->pageData->setPath($path);
         $actual = translate_url($this->pageData, $locale);
