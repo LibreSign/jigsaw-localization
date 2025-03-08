@@ -17,6 +17,8 @@ final class LocalePathTest extends TestCase
         return [
             ['blog', null, '/blog'],
             ['blog', 'ar', '/ar/blog'],
+            ['blog/', 'ar', '/ar/blog/'],
+            ['/blog/', 'ar', '/ar/blog/'],
         ];
     }
 }
