@@ -83,6 +83,9 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
     $target_locale ??= current_path_locale($page);
 
     $partial_path = '/'.ltrim($partial_path, '/');
+    if (! str_ends_with($partial_path, '/')) {
+        $partial_path .= '/';
+    }
 
     return match (true) {
         $target_locale === packageDefaultLocale($page) => $partial_path,
