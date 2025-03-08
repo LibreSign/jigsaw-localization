@@ -1,0 +1,21 @@
+name: Lint with Laravel rules
+
+on: [push]
+
+jobs:
+  php-code-styling:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install dependencies
+        run: |
+          composer i
+
+      - name: Check if have fixes to apply
+        run: |
+          vendor/bin/pint --test || ( echo 'Please run `vendor/bin/pint` to format your code' && exit 1 )
