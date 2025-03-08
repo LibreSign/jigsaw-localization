@@ -15,8 +15,8 @@ final class LocalePathTest extends TestCase
     public static function providerLocalePath(): array
     {
         return [
-            ['blog', null, '/blog'],
-            ['blog', 'ar', '/ar/blog'],
+            ['blog', null, '/blog/'],
+            ['blog', 'ar', '/ar/blog/'],
             ['blog/', 'ar', '/ar/blog/'],
             ['/blog/', 'ar', '/ar/blog/'],
         ];
