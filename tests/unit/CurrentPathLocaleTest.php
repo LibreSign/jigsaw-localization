@@ -6,7 +6,7 @@ use Tests\TestCase;
 final class CurrentPathLocaleTest extends TestCase
 {
     #[DataProvider('providerLanguageCode')]
-    public function testLanguageCode($path, $expected): void
+    public function test_language_code($path, $expected): void
     {
         $this->pageData->setPath($path);
         $actual = current_path_locale($this->pageData);
