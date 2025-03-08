@@ -51,13 +51,16 @@ function translate_path($page, ?string $target_locale = null): string
 
     $current_locale = current_path_locale($page);
 
-    $partial_path = match (true) {
+    $partial_path = (string) match (true) {
         $current_locale === packageDefaultLocale($page) => $page->getPath(),
         default => substr($page->getPath(), strlen($current_locale) + 1),
     };
+    if ($partial_path === '/') {
+        $partial_path = '';
+    }
 
     return match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path ?: '/',
+        $target_locale === packageDefaultLocale($page) => $partial_path,
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 }
@@ -89,7 +92,7 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
     }
 
     return match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path ?: '/',
+        $target_locale === packageDefaultLocale($page) => $partial_path,
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 }
