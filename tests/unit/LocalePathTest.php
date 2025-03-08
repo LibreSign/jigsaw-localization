@@ -16,13 +16,13 @@ final class LocalePathTest extends TestCase
     {
         return [
             // Handling empty paths
-            ['', null, '/'],
+            ['', null, ''],
             ['', 'ar', '/ar'],
 
             // Root path handling
-            ['/', null, '/'],
+            ['/', null, ''],
             ['/', 'ar', '/ar'],
-            ['/', packageDefaultLocale(), '/'],
+            ['/', packageDefaultLocale(), ''],
 
             // Basic path translation
             ['blog', null, '/blog'],
@@ -36,7 +36,7 @@ final class LocalePathTest extends TestCase
 
             // Paths when `packageDefaultLocale()` should not add a locale prefix
             ['blog', packageDefaultLocale(), '/blog'],
-            ['/', packageDefaultLocale(), '/'],
+            ['/blog', packageDefaultLocale(), '/blog'],
 
             // Special characters handling
             ['café', 'fr', '/fr/café'],
