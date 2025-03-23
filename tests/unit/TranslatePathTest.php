@@ -61,8 +61,8 @@ final class TranslatePathTest extends TestCase
 
             // Testing `/` as a root path (edge case)
             ['/', 'ar', '/ar'],
-            ['/', null, ''],
-            ['/', packageDefaultLocale(), ''],
+            ['/', null, '/'],
+            ['/', packageDefaultLocale(), '/'],
 
             // Testing paths with unrecognized prefixes (should keep them)
             ['/custom-path/blog', 'fr-CA', '/fr-CA/custom-path/blog'],
@@ -74,7 +74,7 @@ final class TranslatePathTest extends TestCase
 
             // Handling an empty path (should default to `/`)
             ['', 'ar', '/ar'],
-            ['', null, ''],
+            ['', null, '/'],
 
             // Deeply nested paths
             ['/es/a/b/c/d/e', 'ar', '/ar/a/b/c/d/e'],
@@ -91,7 +91,7 @@ final class TranslatePathTest extends TestCase
 
             // Handling trailing slashes
             ['/es/', 'ar', '/ar'],
-            ['/fr-CA/', null, ''],
+            ['/fr-CA/', null, '/'],
             ['/blog/', 'ar', '/ar/blog'],
 
         /**
