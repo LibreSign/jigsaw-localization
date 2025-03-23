@@ -16,13 +16,13 @@ final class LocalePathTest extends TestCase
     {
         return [
             // Handling empty paths
-            ['', null, ''],
+            ['', null, '/'],
             ['', 'ar', '/ar'],
 
             // Root path handling
-            ['/', null, ''],
+            ['/', null, '/'],
             ['/', 'ar', '/ar'],
-            ['/', packageDefaultLocale(), ''],
+            ['/', packageDefaultLocale(), '/'],
 
             // Basic path translation
             ['blog', null, '/blog'],

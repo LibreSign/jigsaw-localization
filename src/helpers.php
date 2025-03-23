@@ -59,10 +59,12 @@ function translate_path($page, ?string $target_locale = null): string
         $partial_path = '';
     }
 
-    return match (true) {
+    $match = match (true) {
         $target_locale === packageDefaultLocale($page) => $partial_path,
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
+
+    return ! empty($match) ? $match : '/';
 }
 
 /**
@@ -91,10 +93,12 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
         $partial_path = '';
     }
 
-    return match (true) {
+    $match = match (true) {
         $target_locale === packageDefaultLocale($page) => $partial_path,
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
+
+    return ! empty($match) ? $match : '/';
 }
 
 /**
