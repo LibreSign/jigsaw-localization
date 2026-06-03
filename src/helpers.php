@@ -117,3 +117,54 @@ function packageDefaultLocale($page = null): string
 {
     return $page->defaultLocale ?? 'en';
 }
+
+/**
+ * Returns the display name map for all supported locales.
+ * Falls back to the locale code if not found.
+ *
+ * Site-level overrides can be provided via a `localeNames` config key.
+ *
+ * @param  mixed  $page
+ * @return array<string, string>  locale code => display name
+ */
+function locale_names($page): array
+{
+    static $defaults = [
+        'en'    => 'English',
+        'cs'    => 'Čeština',
+        'fr'    => 'Français',
+        'nb-NO' => 'Norsk bokmål',
+        'pt'    => 'Português',
+        'pt-BR' => 'Português Brasil',
+        'ta'    => 'தமிழ்',
+    ];
+
+    if (isset($page->localeNames) && is_array($page->localeNames)) {
+        return $page->localeNames;
+    }
+
+    return $defaults;
+}
+
+/**
+ * Returns an ordered map of URL key => display name for all available locales.
+ * The default locale uses an empty string key (no URL prefix).
+ *
+ * Intended for use in navigation language selectors.
+ *
+ * @param  mixed  $page
+ * @return array<string, string>  url key => display name
+ */
+function available_locales($page): array
+{
+    $names = locale_names($page);
+
+    return $page->localization->keys()
+        ->mapWithKeys(function ($locale) use ($page, $names) {
+            $urlKey = ($locale === packageDefaultLocale($page)) ? '' : $locale;
+            $name = $names[$locale] ?? $locale;
+
+            return [$urlKey => $name];
+        })
+        ->all();
+}
