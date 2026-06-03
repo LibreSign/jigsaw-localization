@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Intl\Locales;
+
 /**
  * @see https://www.w3.org/International/articles/language-tags/
  * @see https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
@@ -120,7 +122,7 @@ function packageDefaultLocale($page = null): string
 
 /**
  * Returns the display name map for all supported locales.
- * Falls back to the locale code if not found.
+ * Each locale name is rendered in the locale's own language using ICU data.
  *
  * Site-level overrides can be provided via a `localeNames` config key.
  *
@@ -129,21 +131,21 @@ function packageDefaultLocale($page = null): string
  */
 function locale_names($page): array
 {
-    static $defaults = [
-        'en'    => 'English',
-        'cs'    => 'Čeština',
-        'fr'    => 'Français',
-        'nb-NO' => 'Norsk bokmål',
-        'pt'    => 'Português',
-        'pt-BR' => 'Português Brasil',
-        'ta'    => 'தமிழ்',
-    ];
-
     if (isset($page->localeNames) && is_array($page->localeNames)) {
         return $page->localeNames;
     }
 
-    return $defaults;
+    return $page->localization->keys()
+        ->mapWithKeys(function ($locale) {
+            // Symfony\Component\Intl\Locales uses underscores (BCP 47 with underscore)
+            $icu = str_replace('-', '_', $locale);
+            $name = Locales::exists($icu)
+                ? Locales::getName($icu, $icu)
+                : $locale;
+
+            return [$locale => $name];
+        })
+        ->all();
 }
 
 /**
