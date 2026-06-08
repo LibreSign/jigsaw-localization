@@ -39,7 +39,11 @@ function current_path_locale($page): string
 
     preg_match($locale_regex, $path, $matches);
 
-    return $matches['locale'] ?? packageDefaultLocale();
+    if (isset($matches['locale']) && $page->localization->has($matches['locale'])) {
+        return $matches['locale'];
+    }
+
+    return packageDefaultLocale();
 }
 
 /**
