@@ -141,6 +141,12 @@ function locale_names($page): array
 
     return $page->localization->keys()
         ->mapWithKeys(function ($locale) {
+            // Symfony\Component\Intl\Locales requires the PHP intl extension.
+            // Fall back to the raw locale code when the extension is not loaded.
+            if (!extension_loaded('intl')) {
+                return [$locale => $locale];
+            }
+
             // Symfony\Component\Intl\Locales uses underscores (BCP 47 with underscore)
             $icu = str_replace('-', '_', $locale);
             $name = Locales::exists($icu)
