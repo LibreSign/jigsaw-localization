@@ -73,7 +73,7 @@ final class JsonTranslationCatalog
             $encoded = json_encode(
                 $translations,
                 JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT,
-            ).PHP_EOL;
+            )."\n";
         } catch (JsonException $exception) {
             throw new RuntimeException("Unable to encode translation catalog: {$this->path}", 0, $exception);
         }
