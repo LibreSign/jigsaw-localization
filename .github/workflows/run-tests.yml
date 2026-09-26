@@ -63,3 +63,11 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit
+
+      - name: Export Composer lockfile for CI reproducibility
+        if: matrix.os == 'ubuntu-latest' && matrix.php == '8.2' && matrix.stability == 'prefer-stable'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: composer-lock
+          path: composer.lock
+          if-no-files-found: error
