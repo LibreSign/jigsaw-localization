@@ -7,7 +7,7 @@ use TightenCo\Jigsaw\Jigsaw;
 
 class LoadLocalization
 {
-    public function __construct(private readonly string $path = '/lang') {}
+    public function __construct(private string $path = '/lang') {}
 
     public function handle(Jigsaw $jigsaw): void
     {

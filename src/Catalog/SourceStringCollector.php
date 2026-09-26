@@ -15,7 +15,7 @@ final class SourceStringCollector
     /** @var array<string, string> */
     private array $strings = [];
 
-    public function __construct(private readonly string $sourceLocale = 'en')
+    public function __construct(private string $sourceLocale = 'en')
     {
         if ($sourceLocale === '') {
             throw new InvalidArgumentException('The source locale cannot be empty.');

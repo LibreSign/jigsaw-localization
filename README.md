@@ -354,3 +354,84 @@ When registered as a Jigsaw listener, the default usage remains backward compati
 ```php
 $events->beforeBuild([LoadLocalization::class]);
 ```
+
+
+### Extracting source strings
+
+Extraction is split into two layers:
+
+1. a `TranslationSource` describes where content came from and which locale it belongs to;
+2. one or more `TranslationStringExtractor` implementations know how to find strings inside that source.
+
+The `ExtractionPipeline` owns the source-locale boundary. Sources from any other locale are ignored before an extractor is invoked, which prevents translated content from being fed back into the canonical source catalog.
+
+```php
+use ElaborateCode\JigsawLocalization\Extraction\CallbackStringExtractor;
+use ElaborateCode\JigsawLocalization\Extraction\ExtractionPipeline;
+use ElaborateCode\JigsawLocalization\Extraction\TranslationSource;
+
+$extractor = new CallbackStringExtractor(
+    fn (TranslationSource $source): bool => str_ends_with($source->identifier(), '.md'),
+    fn (TranslationSource $source): array => [$source->contents()],
+);
+
+$pipeline = new ExtractionPipeline('en', [$extractor]);
+
+$catalog = $pipeline->catalog([
+    new TranslationSource('en', 'posts/hello.md', 'Hello'),
+    new TranslationSource('pt-BR', 'posts/ola.md', 'Olá'),
+]);
+
+// ['Hello' => 'Hello']
+```
+
+For reusable integrations, implement `TranslationStringExtractor` directly. The callback adapter is intended for small project-specific adapters where adding a dedicated class would add little value.
+
+An extractor may yield plain strings or `ExtractedString` instances. `ExtractedString` can retain source path, line number, and an optional context label for diagnostics without changing the catalog format.
+
+The package intentionally does not hardcode Blade, Markdown, Weblate, Transifex, or any other translation workflow. A Jigsaw project can extract from templates during a build, statically inspect source files, consume CMS content, or combine several extractors in the same pipeline.
+
+### Synchronizing source and translated catalogs
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogSynchronizer;
+
+$synchronizer = new TranslationCatalogSynchronizer();
+
+$source = $synchronizer->source([
+    'Hello',
+    'Goodbye',
+]);
+
+$ptBr = $synchronizer->translation(
+    $source,
+    [
+        'Hello' => 'Olá',
+        'Old key' => 'Tradução antiga',
+    ],
+);
+```
+
+Source catalogs are rebuilt canonically as `source text => source text`. Translation catalogs preserve existing translations and obsolete keys by default. New source keys receive the source text as a fallback.
+
+Removing obsolete translation keys is an explicit project decision:
+
+```php
+$ptBr = $synchronizer->translation($source, $ptBr, pruneObsolete: true);
+```
+
+This distinction is intentional: rebuilding the source catalog and pruning translated catalogs are different operations with different data-loss risks.
+
+### Safe catalog paths
+
+`TranslationCatalogLocator` builds catalog file paths while rejecting directory traversal and nested path segments. It does not enforce a particular locale standard, so projects may use names such as `pt-BR`, `zh_Hant_TW`, or their own locale convention.
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogLocator;
+
+$locator = new TranslationCatalogLocator('lang');
+
+$sourcePath = $locator->path('en');
+$messagesPath = $locator->path('pt-BR', 'messages');
+```
+

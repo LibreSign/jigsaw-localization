@@ -13,7 +13,7 @@ use RuntimeException;
  */
 final class JsonTranslationCatalog
 {
-    public function __construct(private readonly string $path) {}
+    public function __construct(private string $path) {}
 
     /**
      * @return array<string, string>
@@ -30,23 +30,25 @@ final class JsonTranslationCatalog
         }
 
         try {
-            $decoded = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($contents, false, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $exception) {
             throw new RuntimeException("Invalid JSON translation catalog: {$this->path}", 0, $exception);
         }
 
-        if (! is_array($decoded)) {
+        if (! $decoded instanceof \stdClass) {
             throw new RuntimeException("Translation catalog must contain a JSON object: {$this->path}");
         }
 
-        foreach ($decoded as $key => $value) {
-            if (! is_string($key) || ! is_string($value)) {
+        $translations = [];
+        foreach (get_object_vars($decoded) as $key => $value) {
+            if (! is_string($value)) {
                 throw new RuntimeException("Translation catalog must contain only string keys and string values: {$this->path}");
             }
+
+            $translations[$key] = $value;
         }
 
-        /** @var array<string, string> $decoded */
-        return $decoded;
+        return $translations;
     }
 
     /**

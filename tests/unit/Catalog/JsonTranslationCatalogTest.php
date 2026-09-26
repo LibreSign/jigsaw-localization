@@ -73,6 +73,17 @@ final class JsonTranslationCatalogTest extends TestCase
         (new JsonTranslationCatalog($path))->read();
     }
 
+    public function test_json_arrays_are_rejected_even_when_empty(): void
+    {
+        $path = $this->directory.'/invalid.json';
+        file_put_contents($path, '[]');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('must contain a JSON object');
+
+        (new JsonTranslationCatalog($path))->read();
+    }
+
     public function test_nested_or_non_string_values_are_rejected(): void
     {
         $path = $this->directory.'/invalid.json';
