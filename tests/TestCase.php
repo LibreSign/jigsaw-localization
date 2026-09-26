@@ -16,7 +16,17 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->pageData = new PageMock;
+        $this->pageData = (new PageMock)->setLocalization([
+            'en' => [],
+            'ar' => [],
+            'es' => [],
+            'fr' => [],
+            'fr-CA' => [],
+            'haw-US' => [],
+            'en-UK' => [],
+            'pt-BR' => [],
+            'raw-US' => [],
+        ]);
         $this->app = Container::getInstance();
     }
 }

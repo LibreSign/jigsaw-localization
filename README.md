@@ -284,3 +284,73 @@ Wanna see a project that is up and running with this library? checkout this [rep
 ## Contributing
 
 Any help is very welcomed, feel free to fork and PR :)
+
+
+## Working with translation catalogs
+
+The package also provides small, tool-agnostic building blocks for projects that need to collect, persist, or validate JSON translation catalogs. These APIs do not require any translation service and work equally well with manually maintained files or external localization tools.
+
+### Collecting canonical source strings
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\SourceStringCollector;
+
+$collector = new SourceStringCollector('en');
+
+$collector->collect('en', 'Hello');
+$collector->collect('pt-BR', 'Olá'); // ignored because it is not the source locale
+
+$sourceStrings = $collector->all();
+// ['Hello' => 'Hello']
+```
+
+The collector only accepts strings from the configured source locale, deduplicates them, and returns a deterministic, sorted source catalog.
+
+### Reading and writing JSON catalogs
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\JsonTranslationCatalog;
+
+$catalog = new JsonTranslationCatalog('lang/en/main.json');
+
+$catalog->write([
+    'Hello' => 'Hello',
+    'Goodbye' => 'Goodbye',
+]);
+
+$translations = $catalog->read();
+```
+
+Writes are deterministic, preserve Unicode and slashes, use pretty-printed JSON, and avoid rewriting an unchanged file.
+
+### Validating translation placeholders
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogValidator;
+
+$validator = new TranslationCatalogValidator();
+
+$errors = $validator->validatePlaceholders(
+    ['%s signed %d documents' => '%s signed %d documents'],
+    ['%s signed %d documents' => '%2$d documents signed by %1$s'],
+);
+```
+
+Positional printf placeholders are supported, so translators can safely reorder arguments. Missing and additional translation keys are intentionally left to project policy.
+
+### Custom translation directory
+
+The default `LoadLocalization` behavior remains unchanged and loads `/lang`. Projects can now point it at another directory:
+
+```php
+use ElaborateCode\JigsawLocalization\LoadLocalization;
+
+$loader = new LoadLocalization('/path/to/translations');
+$translations = $loader->load();
+```
+
+When registered as a Jigsaw listener, the default usage remains backward compatible:
+
+```php
+$events->beforeBuild([LoadLocalization::class]);
+```

@@ -1,6 +1,14 @@
-name: Lint with Laravel rules
+name: Lint with Laravel Pint
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   php-code-styling:
@@ -8,14 +16,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          ref: ${{ github.head_ref }}
+          php-version: '8.4'
+          coverage: none
+          tools: composer:v2
 
       - name: Install dependencies
-        run: |
-          composer i
+        run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
-      - name: Check if have fixes to apply
-        run: |
-          vendor/bin/pint --test || ( echo 'Please run `vendor/bin/pint` to format your code' && exit 1 )
+      - name: Check code style
+        run: vendor/bin/pint --test

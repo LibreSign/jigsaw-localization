@@ -7,10 +7,20 @@ use TightenCo\Jigsaw\Jigsaw;
 
 class LoadLocalization
 {
-    public function handle(Jigsaw $jigsaw)
+    public function __construct(private readonly string $path = '/lang')
     {
-        $tongue = new TongueFacade('/lang');
+    }
 
-        $jigsaw->setConfig('localization', $tongue->transcribe());
+    public function handle(Jigsaw $jigsaw): void
+    {
+        $jigsaw->setConfig('localization', $this->load());
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function load(): array
+    {
+        return (new TongueFacade($this->path))->transcribe();
     }
 }
