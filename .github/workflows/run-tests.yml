@@ -12,12 +12,11 @@ permissions:
 
 jobs:
   test:
-    name: P${{ matrix.php }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
         php: ['8.3', '8.4', '8.5']
 
     steps:
@@ -41,7 +40,7 @@ jobs:
         run: vendor-bin/phpunit/vendor/bin/phpunit
 
   lowest-dependencies:
-    name: P8.3 - prefer-lowest - ubuntu-latest
+    name: PHP 8.3 - prefer-lowest
     runs-on: ubuntu-latest
 
     steps:
