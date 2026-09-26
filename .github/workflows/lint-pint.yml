@@ -29,4 +29,7 @@ jobs:
         run: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Check code style
-        run: vendor/bin/pint --test
+        shell: bash
+        run: |
+          vendor/bin/pint
+          git diff --exit-code -- '*.php'
