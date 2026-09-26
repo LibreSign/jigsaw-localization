@@ -70,7 +70,7 @@ function translate_path($page, ?string $target_locale = null): string
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 
-    return !empty($match) ? $match : '/';
+    return ! empty($match) ? $match : '/';
 }
 
 /**
@@ -104,7 +104,7 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 
-    return !empty($match) ? $match : '/';
+    return ! empty($match) ? $match : '/';
 }
 
 /**
@@ -131,7 +131,7 @@ function packageDefaultLocale($page = null): string
  * Site-level overrides can be provided via a `localeNames` config key.
  *
  * @param  mixed  $page
- * @return array<string, string>  locale code => display name
+ * @return array<string, string> locale code => display name
  */
 function locale_names($page): array
 {
@@ -143,7 +143,7 @@ function locale_names($page): array
         ->mapWithKeys(function ($locale) {
             // Symfony\Component\Intl\Locales requires the PHP intl extension.
             // Fall back to the raw locale code when the extension is not loaded.
-            if (!extension_loaded('intl')) {
+            if (! extension_loaded('intl')) {
                 return [$locale => $locale];
             }
 
@@ -165,7 +165,7 @@ function locale_names($page): array
  * Intended for use in navigation language selectors.
  *
  * @param  mixed  $page
- * @return array<string, string>  url key => display name
+ * @return array<string, string> url key => display name
  */
 function available_locales($page): array
 {
