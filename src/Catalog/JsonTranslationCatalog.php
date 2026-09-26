@@ -60,6 +60,7 @@ final class JsonTranslationCatalog
     public function write(array $translations): bool
     {
         foreach ($translations as $key => $value) {
+            /** @var mixed $value */
             if (! is_string($value)) {
                 throw new RuntimeException("Translation catalog must contain only string values: {$this->path}");
             }

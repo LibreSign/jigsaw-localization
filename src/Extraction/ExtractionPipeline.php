@@ -54,6 +54,7 @@ final class ExtractionPipeline
                 }
 
                 foreach ($extractor->extract($source) as $extracted) {
+                    /** @var mixed $extracted */
                     if (! is_string($extracted) && ! $extracted instanceof ExtractedString) {
                         throw new UnexpectedValueException(sprintf(
                             'Extractor %s must yield strings or %s instances.',
