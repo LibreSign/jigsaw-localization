@@ -38,7 +38,7 @@ jobs:
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor-bin/phpunit/vendor/bin/phpunit
 
   lowest-dependencies:
     name: P8.2 - prefer-lowest - ubuntu-latest
@@ -62,4 +62,4 @@ jobs:
         run: composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor-bin/phpunit/vendor/bin/phpunit
