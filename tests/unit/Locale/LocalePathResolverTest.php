@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Locale;
 
-use LibreSign\JigsawLocalization\Locale\LocalePathResolver;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Locale\LocalePathResolver;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

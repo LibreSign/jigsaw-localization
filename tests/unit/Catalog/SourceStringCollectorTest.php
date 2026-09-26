@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Catalog;
 
-use LibreSign\JigsawLocalization\Catalog\SourceStringCollector;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Catalog\SourceStringCollector;
 use PHPUnit\Framework\TestCase;
 
 final class SourceStringCollectorTest extends TestCase

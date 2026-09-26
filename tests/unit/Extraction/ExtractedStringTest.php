@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Extraction;
 
-use LibreSign\JigsawLocalization\Extraction\ExtractedString;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Extraction\ExtractedString;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

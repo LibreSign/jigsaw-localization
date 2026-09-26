@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Catalog;
 
-use LibreSign\JigsawLocalization\Catalog\TranslationCatalogLocator;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Catalog\TranslationCatalogLocator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

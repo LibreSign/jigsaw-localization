@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Extraction;
 
-use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 use PHPUnit\Framework\TestCase;
 
 final class TranslationSourceTest extends TestCase

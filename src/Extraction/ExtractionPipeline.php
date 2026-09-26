@@ -2,8 +2,8 @@
 
 namespace LibreSign\JigsawLocalization\Extraction;
 
-use LibreSign\JigsawLocalization\Contracts\TranslationStringExtractor;
 use InvalidArgumentException;
+use LibreSign\JigsawLocalization\Contracts\TranslationStringExtractor;
 
 /**
  * Runs registered extractors only for the configured source locale.
