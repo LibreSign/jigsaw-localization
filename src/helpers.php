@@ -1,7 +1,8 @@
 <?php
 
+use ElaborateCode\JigsawLocalization\Locale\AvailableLocaleMap;
+use ElaborateCode\JigsawLocalization\Locale\LocaleNameResolver;
 use ElaborateCode\JigsawLocalization\Locale\LocalePathResolver;
-use Symfony\Component\Intl\Locales;
 
 /**
  * @see https://www.w3.org/International/articles/language-tags/
@@ -100,27 +101,14 @@ function packageDefaultLocale($page = null): string
  */
 function locale_names($page): array
 {
-    if (isset($page->localeNames) && is_array($page->localeNames)) {
-        return $page->localeNames;
-    }
+    $overrides = is_array($page->localeNames ?? null)
+        ? $page->localeNames
+        : null;
 
-    return $page->localization->keys()
-        ->mapWithKeys(function ($locale) {
-            // Symfony\Component\Intl\Locales requires the PHP intl extension.
-            // Fall back to the raw locale code when the extension is not loaded.
-            if (! extension_loaded('intl')) {
-                return [$locale => $locale];
-            }
-
-            // Symfony\Component\Intl\Locales uses underscores (BCP 47 with underscore)
-            $icu = str_replace('-', '_', $locale);
-            $name = Locales::exists($icu)
-                ? Locales::getName($icu, $icu)
-                : $locale;
-
-            return [$locale => $name];
-        })
-        ->all();
+    return (new LocaleNameResolver)->names(
+        $page->localization->keys()->all(),
+        $overrides,
+    );
 }
 
 /**
@@ -134,14 +122,9 @@ function locale_names($page): array
  */
 function available_locales($page): array
 {
-    $names = locale_names($page);
-
-    return $page->localization->keys()
-        ->mapWithKeys(function ($locale) use ($page, $names) {
-            $urlKey = ($locale === packageDefaultLocale($page)) ? '' : $locale;
-            $name = $names[$locale] ?? $locale;
-
-            return [$urlKey => $name];
-        })
-        ->all();
+    return (new AvailableLocaleMap)->build(
+        $page->localization->keys()->all(),
+        packageDefaultLocale($page),
+        locale_names($page),
+    );
 }
