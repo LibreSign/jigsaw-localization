@@ -62,8 +62,11 @@ final class JsonTranslationCatalog
         ksort($translations);
 
         $directory = dirname($this->path);
-        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
-            throw new RuntimeException("Unable to create translation catalog directory: {$directory}");
+        if (is_dir($directory) === false) {
+            $created = mkdir($directory, 0755, true);
+            if ($created === false && is_dir($directory) === false) {
+                throw new RuntimeException("Unable to create translation catalog directory: {$directory}");
+            }
         }
 
         try {
