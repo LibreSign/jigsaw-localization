@@ -5,6 +5,8 @@ updates:
     directories:
       - /
       - /vendor-bin/phpunit
+      - /vendor-bin/phpstan
+      - /vendor-bin/phpmd
       - /vendor-bin/pint
     schedule:
       interval: weekly
