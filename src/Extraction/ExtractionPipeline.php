@@ -54,16 +54,16 @@ final class ExtractionPipeline
                 }
 
                 foreach ($extractor->extract($source) as $extracted) {
-                    if (is_string($extracted)) {
-                        $extracted = new ExtractedString($extracted, $source->identifier());
-                    }
-
-                    if (! $extracted instanceof ExtractedString) {
+                    if (! is_string($extracted) && ! $extracted instanceof ExtractedString) {
                         throw new UnexpectedValueException(sprintf(
                             'Extractor %s must yield strings or %s instances.',
                             $extractor::class,
                             ExtractedString::class,
                         ));
+                    }
+
+                    if (is_string($extracted)) {
+                        $extracted = new ExtractedString($extracted, $source->identifier());
                     }
 
                     $strings[$extracted->text()] ??= $extracted;

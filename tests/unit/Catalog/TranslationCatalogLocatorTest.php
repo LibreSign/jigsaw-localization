@@ -4,6 +4,7 @@ namespace Tests\Unit\Catalog;
 
 use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogLocator;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class TranslationCatalogLocatorTest extends TestCase
@@ -23,9 +24,7 @@ final class TranslationCatalogLocatorTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider unsafeSegments
-     */
+    #[DataProvider('unsafeSegments')]
     public function test_it_rejects_unsafe_path_segments(string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
