@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ef3c4393d00fc0cafa0115808d82865",
+    "content-hash": "152dae53e4676c54c33a215781509801",
     "packages": [
         {
             "name": "elaborate-code/php-json-tongue",
