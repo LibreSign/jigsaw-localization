@@ -1,9 +1,9 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization;
+namespace LibreSign\JigsawLocalization;
 
-use ElaborateCode\JigsawLocalization\Contracts\LocalizationLoader;
-use ElaborateCode\JigsawLocalization\Loader\JsonDirectoryLoader;
+use LibreSign\JigsawLocalization\Contracts\LocalizationLoader;
+use LibreSign\JigsawLocalization\Loader\JsonDirectoryLoader;
 use TightenCo\Jigsaw\Jigsaw;
 
 class LoadLocalization

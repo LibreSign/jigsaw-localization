@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Extraction;
 
-use ElaborateCode\JigsawLocalization\Extraction\ExtractedString;
-use ElaborateCode\JigsawLocalization\Extraction\ExtractedStringNormalizer;
-use ElaborateCode\JigsawLocalization\Extraction\TranslationSource;
+use LibreSign\JigsawLocalization\Extraction\ExtractedString;
+use LibreSign\JigsawLocalization\Extraction\ExtractedStringNormalizer;
+use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;

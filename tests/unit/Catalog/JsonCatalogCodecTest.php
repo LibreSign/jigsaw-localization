@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Catalog;
 
-use ElaborateCode\JigsawLocalization\Catalog\JsonCatalogCodec;
+use LibreSign\JigsawLocalization\Catalog\JsonCatalogCodec;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

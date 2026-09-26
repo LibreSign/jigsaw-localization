@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use ElaborateCode\JigsawLocalization\Contracts\LocalizationLoader;
-use ElaborateCode\JigsawLocalization\LoadLocalization;
+use LibreSign\JigsawLocalization\Contracts\LocalizationLoader;
+use LibreSign\JigsawLocalization\LoadLocalization;
 use PHPUnit\Framework\TestCase;
 
 final class LocalizationLoaderContractTest extends TestCase

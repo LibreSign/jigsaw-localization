@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Catalog;
 
-use ElaborateCode\JigsawLocalization\Catalog\SourceStringCollector;
+use LibreSign\JigsawLocalization\Catalog\SourceStringCollector;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

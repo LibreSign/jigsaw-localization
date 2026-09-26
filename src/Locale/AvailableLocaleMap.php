@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Locale;
+namespace LibreSign\JigsawLocalization\Locale;
 
 /**
  * Builds the URL-key/display-name map used by locale navigation.

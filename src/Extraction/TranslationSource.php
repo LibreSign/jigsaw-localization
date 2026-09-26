@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Extraction;
+namespace LibreSign\JigsawLocalization\Extraction;
 
 use InvalidArgumentException;
 

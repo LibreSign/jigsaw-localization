@@ -1,8 +1,8 @@
 <?php
 
-use ElaborateCode\JigsawLocalization\Locale\AvailableLocaleMap;
-use ElaborateCode\JigsawLocalization\Locale\LocaleNameResolver;
-use ElaborateCode\JigsawLocalization\Locale\LocalePathResolver;
+use LibreSign\JigsawLocalization\Locale\AvailableLocaleMap;
+use LibreSign\JigsawLocalization\Locale\LocaleNameResolver;
+use LibreSign\JigsawLocalization\Locale\LocalePathResolver;
 
 /**
  * @see https://www.w3.org/International/articles/language-tags/

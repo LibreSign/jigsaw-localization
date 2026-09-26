@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Locale;
+namespace LibreSign\JigsawLocalization\Locale;
 
 use Closure;
 use Symfony\Component\Intl\Locales;

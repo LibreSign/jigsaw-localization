@@ -1,8 +1,8 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Extraction;
+namespace LibreSign\JigsawLocalization\Extraction;
 
-use ElaborateCode\JigsawLocalization\Contracts\TranslationStringExtractor;
+use LibreSign\JigsawLocalization\Contracts\TranslationStringExtractor;
 use InvalidArgumentException;
 
 /**

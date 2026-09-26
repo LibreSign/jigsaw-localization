@@ -1,9 +1,9 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Contracts;
+namespace LibreSign\JigsawLocalization\Contracts;
 
-use ElaborateCode\JigsawLocalization\Extraction\ExtractedString;
-use ElaborateCode\JigsawLocalization\Extraction\TranslationSource;
+use LibreSign\JigsawLocalization\Extraction\ExtractedString;
+use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 
 interface TranslationStringExtractor
 {

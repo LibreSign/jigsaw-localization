@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Catalog;
 
-use ElaborateCode\JigsawLocalization\Catalog\PlaceholderExtractor;
+use LibreSign\JigsawLocalization\Catalog\PlaceholderExtractor;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

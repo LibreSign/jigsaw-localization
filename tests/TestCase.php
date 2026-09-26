@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use ElaborateCode\JigsawLocalization\Mocks\PageMock;
+use LibreSign\JigsawLocalization\Mocks\PageMock;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use TightenCo\Jigsaw\Container;
 

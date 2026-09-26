@@ -1,9 +1,9 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Extraction;
+namespace LibreSign\JigsawLocalization\Extraction;
 
 use Closure;
-use ElaborateCode\JigsawLocalization\Contracts\TranslationStringExtractor;
+use LibreSign\JigsawLocalization\Contracts\TranslationStringExtractor;
 
 /**
  * Adapter for projects that want to provide extraction logic without creating

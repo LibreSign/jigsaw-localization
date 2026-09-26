@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Contracts;
+namespace LibreSign\JigsawLocalization\Contracts;
 
 interface LocalizationLoader
 {

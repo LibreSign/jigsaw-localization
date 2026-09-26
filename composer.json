@@ -1,12 +1,18 @@
 {
-    "name": "elaborate-code/jigsaw-localization",
-    "description": "Brings localization feature to \"tightenco/jigsaw\" using JSON files",
+    "name": "libresign/jigsaw-localization",
+    "description": "Localization and translation toolkit for Tighten Jigsaw with JSON catalogs, extraction, validation, and locale-aware routing",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Mohamed Ilies BOUDOUMA",
-            "email": "medilies.contact@gmail.com"
+            "email": "medilies.contact@gmail.com",
+            "role": "Original author"
+        },
+        {
+            "name": "LibreSign",
+            "homepage": "https://libresign.coop",
+            "role": "Maintainer"
         }
     ],
     "require": {
@@ -22,13 +28,13 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "ElaborateCode\\JigsawLocalization\\": "src/"
+            "LibreSign\\JigsawLocalization\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests",
-            "ElaborateCode\\JigsawLocalization\\Mocks\\": "tests/_Mocks"
+            "LibreSign\\JigsawLocalization\\Mocks\\": "tests/_Mocks"
         }
     },
     "scripts": {
@@ -59,5 +65,19 @@
     "prefer-stable": true,
     "suggest": {
         "ext-intl": "For locale display name resolution"
+    },
+    "keywords": [
+        "jigsaw",
+        "localization",
+        "translation",
+        "internationalization",
+        "i18n",
+        "static-site-generator",
+        "blade"
+    ],
+    "homepage": "https://github.com/LibreSign/jigsaw-localization",
+    "support": {
+        "issues": "https://github.com/LibreSign/jigsaw-localization/issues",
+        "source": "https://github.com/LibreSign/jigsaw-localization"
     }
 }

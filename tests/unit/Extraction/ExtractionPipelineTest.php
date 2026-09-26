@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Extraction;
 
-use ElaborateCode\JigsawLocalization\Extraction\CallbackStringExtractor;
-use ElaborateCode\JigsawLocalization\Extraction\ExtractedString;
-use ElaborateCode\JigsawLocalization\Extraction\ExtractionPipeline;
-use ElaborateCode\JigsawLocalization\Extraction\TranslationSource;
+use LibreSign\JigsawLocalization\Extraction\CallbackStringExtractor;
+use LibreSign\JigsawLocalization\Extraction\ExtractedString;
+use LibreSign\JigsawLocalization\Extraction\ExtractionPipeline;
+use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 

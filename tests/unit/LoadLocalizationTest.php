@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use ElaborateCode\JigsawLocalization\LoadLocalization;
+use LibreSign\JigsawLocalization\LoadLocalization;
 use PHPUnit\Framework\TestCase;
 use TightenCo\Jigsaw\Container;
 

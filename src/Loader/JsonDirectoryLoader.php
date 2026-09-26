@@ -1,10 +1,10 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Loader;
+namespace LibreSign\JigsawLocalization\Loader;
 
-use ElaborateCode\JigsawLocalization\Catalog\JsonCatalogCodec;
-use ElaborateCode\JigsawLocalization\Catalog\MultiLocaleJsonCodec;
-use ElaborateCode\JigsawLocalization\Contracts\LocalizationLoader;
+use LibreSign\JigsawLocalization\Catalog\JsonCatalogCodec;
+use LibreSign\JigsawLocalization\Catalog\MultiLocaleJsonCodec;
+use LibreSign\JigsawLocalization\Contracts\LocalizationLoader;
 use RuntimeException;
 
 final class JsonDirectoryLoader implements LocalizationLoader

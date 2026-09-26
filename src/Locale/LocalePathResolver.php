@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Locale;
+namespace LibreSign\JigsawLocalization\Locale;
 
 use InvalidArgumentException;
 

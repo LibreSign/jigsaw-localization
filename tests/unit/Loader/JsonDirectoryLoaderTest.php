@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Loader;
 
-use ElaborateCode\JigsawLocalization\Loader\JsonDirectoryLoader;
+use LibreSign\JigsawLocalization\Loader\JsonDirectoryLoader;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

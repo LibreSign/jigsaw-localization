@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Mocks;
+namespace LibreSign\JigsawLocalization\Mocks;
 
 use Exception;
 use Illuminate\Support\Collection;

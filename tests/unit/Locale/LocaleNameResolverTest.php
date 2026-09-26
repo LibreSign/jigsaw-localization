@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Locale;
 
-use ElaborateCode\JigsawLocalization\Locale\LocaleNameResolver;
+use LibreSign\JigsawLocalization\Locale\LocaleNameResolver;
 use PHPUnit\Framework\TestCase;
 
 final class LocaleNameResolverTest extends TestCase

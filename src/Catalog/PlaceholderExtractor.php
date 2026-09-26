@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Catalog;
+namespace LibreSign\JigsawLocalization\Catalog;
 
 /**
  * Extracts printf/vsprintf placeholders as stable argument-position/type tokens.

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Catalog;
 
-use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogSynchronizer;
+use LibreSign\JigsawLocalization\Catalog\TranslationCatalogSynchronizer;
 use PHPUnit\Framework\TestCase;
 
 final class TranslationCatalogSynchronizerTest extends TestCase

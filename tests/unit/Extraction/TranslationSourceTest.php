@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Extraction;
 
-use ElaborateCode\JigsawLocalization\Extraction\TranslationSource;
+use LibreSign\JigsawLocalization\Extraction\TranslationSource;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

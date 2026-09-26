@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Locale;
 
-use ElaborateCode\JigsawLocalization\Locale\AvailableLocaleMap;
+use LibreSign\JigsawLocalization\Locale\AvailableLocaleMap;
 use PHPUnit\Framework\TestCase;
 
 final class AvailableLocaleMapTest extends TestCase

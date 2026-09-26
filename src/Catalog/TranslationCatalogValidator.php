@@ -1,6 +1,6 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Catalog;
+namespace LibreSign\JigsawLocalization\Catalog;
 
 /**
  * Performs format-level checks that are useful regardless of how a project
