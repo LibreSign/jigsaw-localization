@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use ElaborateCode\JigsawLocalization\LoadLocalization;
 use PHPUnit\Framework\TestCase;
+use TightenCo\Jigsaw\Container;
 
 final class LoadLocalizationTest extends TestCase
 {
@@ -34,6 +35,13 @@ final class LoadLocalizationTest extends TestCase
 
         self::assertSame('Hello', $localization['en']['Hello']);
         self::assertSame('Olá', $localization['pt-BR']['Hello']);
+    }
+
+    public function test_jigsaw_container_can_resolve_the_default_listener(): void
+    {
+        $listener = Container::getInstance()->make(LoadLocalization::class);
+
+        self::assertInstanceOf(LoadLocalization::class, $listener);
     }
 
     private function removeDirectory(string $directory): void
