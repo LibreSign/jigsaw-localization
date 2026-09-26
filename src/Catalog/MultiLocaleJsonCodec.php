@@ -19,6 +19,14 @@ final class MultiLocaleJsonCodec
             throw new RuntimeException("Invalid JSON translation catalog: {$source}", 0, $exception);
         }
 
+        return $this->decodeObject($decoded, $source);
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    private function decodeObject(mixed $decoded, string $source): array
+    {
         if (! $decoded instanceof stdClass) {
             throw new RuntimeException("Multi-locale catalog must contain a JSON object: {$source}");
         }
@@ -26,11 +34,7 @@ final class MultiLocaleJsonCodec
         $locales = [];
 
         foreach (get_object_vars($decoded) as $locale => $translations) {
-            if (! $translations instanceof stdClass) {
-                throw new RuntimeException("Multi-locale catalog entries must be JSON objects: {$source}");
-            }
-
-            $locales[$locale] = $this->translations($translations, $source);
+            $locales[$locale] = $this->decodeLocale($translations, $source);
         }
 
         return $locales;
@@ -39,8 +43,12 @@ final class MultiLocaleJsonCodec
     /**
      * @return array<string, string>
      */
-    private function translations(stdClass $translations, string $source): array
+    private function decodeLocale(mixed $translations, string $source): array
     {
+        if (! $translations instanceof stdClass) {
+            throw new RuntimeException("Multi-locale catalog entries must be JSON objects: {$source}");
+        }
+
         $catalog = [];
 
         foreach (get_object_vars($translations) as $key => $value) {
