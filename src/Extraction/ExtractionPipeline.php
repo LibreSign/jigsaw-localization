@@ -4,7 +4,6 @@ namespace ElaborateCode\JigsawLocalization\Extraction;
 
 use ElaborateCode\JigsawLocalization\Contracts\TranslationStringExtractor;
 use InvalidArgumentException;
-use UnexpectedValueException;
 
 /**
  * Runs registered extractors only for the configured source locale.
@@ -17,21 +16,22 @@ final class ExtractionPipeline
     /** @var list<TranslationStringExtractor> */
     private array $extractors;
 
+    private ExtractedStringNormalizer $normalizer;
+
     /**
      * @param  iterable<TranslationStringExtractor>  $extractors
      */
     public function __construct(
         private string $sourceLocale,
         iterable $extractors,
+        ?ExtractedStringNormalizer $normalizer = null,
     ) {
         if ($sourceLocale === '') {
             throw new InvalidArgumentException('The source locale cannot be empty.');
         }
 
-        $this->extractors = [];
-        foreach ($extractors as $extractor) {
-            $this->extractors[] = $extractor;
-        }
+        $this->extractors = $this->collectExtractors($extractors);
+        $this->normalizer = $normalizer ?? new ExtractedStringNormalizer;
     }
 
     /**
@@ -44,31 +44,8 @@ final class ExtractionPipeline
         $strings = [];
 
         foreach ($sources as $source) {
-            if ($source->locale() !== $this->sourceLocale) {
-                continue;
-            }
-
-            foreach ($this->extractors as $extractor) {
-                if (! $extractor->supports($source)) {
-                    continue;
-                }
-
-                foreach ($extractor->extract($source) as $extracted) {
-                    /** @var mixed $extracted */
-                    if (! is_string($extracted) && ! $extracted instanceof ExtractedString) {
-                        throw new UnexpectedValueException(sprintf(
-                            'Extractor %s must yield strings or %s instances.',
-                            $extractor::class,
-                            ExtractedString::class,
-                        ));
-                    }
-
-                    if (is_string($extracted)) {
-                        $extracted = new ExtractedString($extracted, $source->identifier());
-                    }
-
-                    $strings[$extracted->text()] ??= $extracted;
-                }
+            if ($source->locale() === $this->sourceLocale) {
+                $this->collectSource($source, $strings);
             }
         }
 
@@ -90,5 +67,47 @@ final class ExtractionPipeline
         }
 
         return $catalog;
+    }
+
+    /**
+     * @param  iterable<TranslationStringExtractor>  $extractors
+     * @return list<TranslationStringExtractor>
+     */
+    private function collectExtractors(iterable $extractors): array
+    {
+        $collected = [];
+
+        foreach ($extractors as $extractor) {
+            $collected[] = $extractor;
+        }
+
+        return $collected;
+    }
+
+    /**
+     * @param  array<string, ExtractedString>  $strings
+     */
+    private function collectSource(TranslationSource $source, array &$strings): void
+    {
+        foreach ($this->extractors as $extractor) {
+            if ($extractor->supports($source)) {
+                $this->collectExtractor($extractor, $source, $strings);
+            }
+        }
+    }
+
+    /**
+     * @param  array<string, ExtractedString>  $strings
+     */
+    private function collectExtractor(
+        TranslationStringExtractor $extractor,
+        TranslationSource $source,
+        array &$strings,
+    ): void {
+        foreach ($extractor->extract($source) as $extracted) {
+            /** @var mixed $extracted */
+            $normalized = $this->normalizer->normalize($extracted, $source, $extractor::class);
+            $strings[$normalized->text()] ??= $normalized;
+        }
     }
 }

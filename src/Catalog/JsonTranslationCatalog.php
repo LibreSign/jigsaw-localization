@@ -2,18 +2,24 @@
 
 namespace ElaborateCode\JigsawLocalization\Catalog;
 
-use JsonException;
 use RuntimeException;
 
 /**
  * Reads and writes a flat JSON translation catalog.
  *
- * This class does not decide who owns the file or how translations are
- * produced. Files can be maintained manually or by any external tool.
+ * This class owns filesystem concerns only. JSON format rules live in
+ * JsonCatalogCodec so they can be tested without disk IO.
  */
 final class JsonTranslationCatalog
 {
-    public function __construct(private string $path) {}
+    private JsonCatalogCodec $codec;
+
+    public function __construct(
+        private string $path,
+        ?JsonCatalogCodec $codec = null,
+    ) {
+        $this->codec = $codec ?? new JsonCatalogCodec;
+    }
 
     /**
      * @return array<string, string>
@@ -24,75 +30,61 @@ final class JsonTranslationCatalog
             return [];
         }
 
-        $contents = file_get_contents($this->path);
-        if ($contents === false) {
-            throw new RuntimeException("Unable to read translation catalog: {$this->path}");
-        }
-
-        try {
-            $decoded = json_decode($contents, false, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $exception) {
-            throw new RuntimeException("Invalid JSON translation catalog: {$this->path}", 0, $exception);
-        }
-
-        if (! $decoded instanceof \stdClass) {
-            throw new RuntimeException("Translation catalog must contain a JSON object: {$this->path}");
-        }
-
-        $translations = [];
-        foreach (get_object_vars($decoded) as $key => $value) {
-            if (! is_string($value)) {
-                throw new RuntimeException("Translation catalog must contain only string keys and string values: {$this->path}");
-            }
-
-            $translations[$key] = $value;
-        }
-
-        return $translations;
+        return $this->codec->decode($this->readContents(), $this->path);
     }
 
     /**
-     * Persist a deterministic representation of a flat translation catalog.
-     *
      * @param  array<string, string>  $translations
      * @return bool true when the file changed, false when it was already current
      */
     public function write(array $translations): bool
     {
-        foreach ($translations as $key => $value) {
-            /** @var mixed $value */
-            if (! is_string($value)) {
-                throw new RuntimeException("Translation catalog must contain only string values: {$this->path}");
-            }
-        }
+        $encoded = $this->codec->encode($translations, $this->path);
 
-        ksort($translations, SORT_STRING);
-
-        $directory = dirname($this->path);
-        if (is_dir($directory) === false) {
-            $created = mkdir($directory, 0755, true);
-            if ($created === false && is_dir($directory) === false) {
-                throw new RuntimeException("Unable to create translation catalog directory: {$directory}");
-            }
-        }
-
-        try {
-            $encoded = json_encode(
-                (object) $translations,
-                JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT,
-            )."\n";
-        } catch (JsonException $exception) {
-            throw new RuntimeException("Unable to encode translation catalog: {$this->path}", 0, $exception);
-        }
-
-        if (is_file($this->path) && file_get_contents($this->path) === $encoded) {
+        if ($this->isCurrent($encoded)) {
             return false;
         }
 
-        if (file_put_contents($this->path, $encoded, LOCK_EX) === false) {
-            throw new RuntimeException("Unable to write translation catalog: {$this->path}");
-        }
+        $this->ensureDirectoryExists();
+        $this->persist($encoded);
 
         return true;
+    }
+
+    private function readContents(): string
+    {
+        $contents = file_get_contents($this->path);
+
+        if ($contents === false) {
+            throw new RuntimeException("Unable to read translation catalog: {$this->path}");
+        }
+
+        return $contents;
+    }
+
+    private function isCurrent(string $encoded): bool
+    {
+        return is_file($this->path)
+            && file_get_contents($this->path) === $encoded;
+    }
+
+    private function ensureDirectoryExists(): void
+    {
+        $directory = dirname($this->path);
+
+        if (is_dir($directory)) {
+            return;
+        }
+
+        if (mkdir($directory, 0755, true) === false && ! is_dir($directory)) {
+            throw new RuntimeException("Unable to create translation catalog directory: {$directory}");
+        }
+    }
+
+    private function persist(string $contents): void
+    {
+        if (file_put_contents($this->path, $contents, LOCK_EX) === false) {
+            throw new RuntimeException("Unable to write translation catalog: {$this->path}");
+        }
     }
 }

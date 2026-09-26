@@ -1,5 +1,6 @@
 <?php
 
+use ElaborateCode\JigsawLocalization\Locale\LocalePathResolver;
 use Symfony\Component\Intl\Locales;
 
 /**
@@ -27,23 +28,10 @@ function __($page, string $text, ?string $current_locale = null): string
  */
 function current_path_locale($page): string
 {
-    $path = trim($page->getPath(), '/');
-
-    /**
-     * - [a-z]{2,3} language code
-     * - [A-Z]{2} region code
-     *
-     * @var string $locale_regex
-     */
-    $locale_regex = '/^(?<locale>(?:[a-z]{2,3}-[A-Z]{2})|(?:[a-z]{2,3}))(?:[^a-zA-Z]|$)/';
-
-    preg_match($locale_regex, $path, $matches);
-
-    if (isset($matches['locale']) && $page->localization->has($matches['locale'])) {
-        return $matches['locale'];
-    }
-
-    return packageDefaultLocale();
+    return new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    )->currentLocale($page->getPath());
 }
 
 /**
@@ -53,26 +41,11 @@ function current_path_locale($page): string
  */
 function translate_path($page, ?string $target_locale = null): string
 {
-    $target_locale ??= packageDefaultLocale();
-
-    $current_locale = current_path_locale($page);
-
-    $partial_path = (string) match (true) {
-        $current_locale === packageDefaultLocale($page) => $page->getPath(),
-        default => substr($page->getPath(), strlen($current_locale) + 1),
-    };
-    if ($partial_path === '/') {
-        $partial_path = '';
-    }
-
-    $match = match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path,
-        default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
-    };
-
-    return ! empty($match) ? $match : '/';
+    return new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    )->translate($page->getPath(), $target_locale);
 }
-
 /**
  * @param  mixed  $page
  * @param  ?string  $target_locale  set to the default locale if null
@@ -93,18 +66,10 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
 {
     $target_locale ??= current_path_locale($page);
 
-    $partial_path = '/'.ltrim($partial_path, '/');
-    $partial_path = preg_replace("/^\/$target_locale\//", '/', $partial_path);
-    if ($partial_path === '/') {
-        $partial_path = '';
-    }
-
-    $match = match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path,
-        default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
-    };
-
-    return ! empty($match) ? $match : '/';
+    return new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    )->localize($partial_path, $target_locale);
 }
 
 /**

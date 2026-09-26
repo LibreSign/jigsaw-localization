@@ -8,6 +8,13 @@ namespace ElaborateCode\JigsawLocalization\Catalog;
  */
 final class TranslationCatalogValidator
 {
+    private PlaceholderExtractor $placeholderExtractor;
+
+    public function __construct(?PlaceholderExtractor $placeholderExtractor = null)
+    {
+        $this->placeholderExtractor = $placeholderExtractor ?? new PlaceholderExtractor;
+    }
+
     /**
      * Validate printf/vsprintf placeholders for entries present in both catalogs.
      * Missing or extra translation keys are intentionally not treated as errors.
@@ -25,16 +32,9 @@ final class TranslationCatalogValidator
                 continue;
             }
 
-            $sourcePlaceholders = $this->placeholders($source[$key]);
-            $translationPlaceholders = $this->placeholders($translatedText);
-
-            if ($sourcePlaceholders !== $translationPlaceholders) {
-                $errors[] = sprintf(
-                    'Placeholder mismatch for "%s": expected [%s], got [%s].',
-                    $key,
-                    implode(', ', $sourcePlaceholders),
-                    implode(', ', $translationPlaceholders),
-                );
+            $error = $this->placeholderError($key, $source[$key], $translatedText);
+            if ($error !== null) {
+                $errors[] = $error;
             }
         }
 
@@ -42,8 +42,6 @@ final class TranslationCatalogValidator
     }
 
     /**
-     * Validate a canonical source catalog where source text is both key and value.
-     *
      * @param  array<string, string>  $source
      * @return list<string>
      */
@@ -60,33 +58,20 @@ final class TranslationCatalogValidator
         return $errors;
     }
 
-    /**
-     * Convert printf placeholders to argument-position/type tokens so translators
-     * may reorder arguments safely by using positional placeholders.
-     *
-     * @return list<string>
-     */
-    private function placeholders(string $text): array
+    private function placeholderError(string $key, string $source, string $translation): ?string
     {
-        $text = str_replace('%%', '', $text);
+        $sourcePlaceholders = $this->placeholderExtractor->extract($source);
+        $translationPlaceholders = $this->placeholderExtractor->extract($translation);
 
-        preg_match_all(
-            "/%(?!%)(?:(?<position>\\d+)\\$)?[-+0' #]*(?:\\d+)?(?:\\.\\d+)?(?<type>[bcdeEfFgGosuxX])/",
-            $text,
-            $matches,
-            PREG_SET_ORDER,
-        );
-
-        $implicitPosition = 1;
-        $placeholders = [];
-
-        foreach ($matches as $match) {
-            $position = $match['position'] !== '' ? (int) $match['position'] : $implicitPosition++;
-            $placeholders[] = $position.':'.$match['type'];
+        if ($sourcePlaceholders === $translationPlaceholders) {
+            return null;
         }
 
-        sort($placeholders);
-
-        return $placeholders;
+        return sprintf(
+            'Placeholder mismatch for "%s": expected [%s], got [%s].',
+            $key,
+            implode(', ', $sourcePlaceholders),
+            implode(', ', $translationPlaceholders),
+        );
     }
 }
