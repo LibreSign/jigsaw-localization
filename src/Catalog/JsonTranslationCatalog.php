@@ -13,9 +13,7 @@ use RuntimeException;
  */
 final class JsonTranslationCatalog
 {
-    public function __construct(private readonly string $path)
-    {
-    }
+    public function __construct(private readonly string $path) {}
 
     /**
      * @return array<string, string>
