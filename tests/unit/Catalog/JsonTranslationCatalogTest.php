@@ -53,6 +53,36 @@ final class JsonTranslationCatalogTest extends TestCase
         );
     }
 
+    public function test_empty_catalog_is_written_as_a_json_object(): void
+    {
+        $path = $this->directory.'/en/main.json';
+        $catalog = new JsonTranslationCatalog($path);
+
+        self::assertTrue($catalog->write([]));
+        self::assertSame("{}\n", file_get_contents($path));
+        self::assertSame([], $catalog->read());
+    }
+
+    public function test_numeric_keys_still_produce_a_json_object(): void
+    {
+        $path = $this->directory.'/en/main.json';
+        $catalog = new JsonTranslationCatalog($path);
+
+        $catalog->write([0 => 'Zero']);
+
+        self::assertSame("{\n    \"0\": \"Zero\"\n}\n", file_get_contents($path));
+    }
+
+    public function test_non_string_values_are_rejected_before_writing(): void
+    {
+        $catalog = new JsonTranslationCatalog($this->directory.'/en/main.json');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('only string values');
+
+        $catalog->write(['Hello' => ['nested']]);
+    }
+
     public function test_write_reports_when_content_is_already_current(): void
     {
         $catalog = new JsonTranslationCatalog($this->directory.'/en/main.json');

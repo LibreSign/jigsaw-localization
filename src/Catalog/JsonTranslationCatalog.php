@@ -59,7 +59,13 @@ final class JsonTranslationCatalog
      */
     public function write(array $translations): bool
     {
-        ksort($translations);
+        foreach ($translations as $key => $value) {
+            if (! is_string($value)) {
+                throw new RuntimeException("Translation catalog must contain only string values: {$this->path}");
+            }
+        }
+
+        ksort($translations, SORT_STRING);
 
         $directory = dirname($this->path);
         if (is_dir($directory) === false) {
@@ -71,7 +77,7 @@ final class JsonTranslationCatalog
 
         try {
             $encoded = json_encode(
-                $translations,
+                (object) $translations,
                 JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT,
             )."\n";
         } catch (JsonException $exception) {
