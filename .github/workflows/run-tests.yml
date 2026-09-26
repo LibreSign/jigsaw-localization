@@ -11,6 +11,38 @@ permissions:
   contents: read
 
 jobs:
+  bootstrap-lock:
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout pull request branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Create lockfile when missing
+        shell: bash
+        run: |
+          if test -f composer.lock; then
+            exit 0
+          fi
+          composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add composer.lock
+          git commit --signoff -m "chore: lock development dependencies"
+          git push
+
   test:
     name: P${{ matrix.php }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
