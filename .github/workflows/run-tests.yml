@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.3', '8.4', '8.5']
 
     steps:
       - name: Checkout code
@@ -41,7 +41,7 @@ jobs:
         run: vendor-bin/phpunit/vendor/bin/phpunit
 
   lowest-dependencies:
-    name: P8.2 - prefer-lowest - ubuntu-latest
+    name: P8.3 - prefer-lowest - ubuntu-latest
     runs-on: ubuntu-latest
 
     steps:
@@ -51,7 +51,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           coverage: none
           tools: composer:v2
 

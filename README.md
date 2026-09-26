@@ -13,7 +13,7 @@ This package is built on top of [PHP JSON tongue](https://github.com/elaborate-c
 
 ### Requirements
 
-- PHP 8.0 or higher.
+- PHP 8.3 or higher.
 
 ### Setup
 
