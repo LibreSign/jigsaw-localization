@@ -3,6 +3,7 @@
 namespace Tests\Unit\Catalog;
 
 use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class TranslationCatalogValidatorTest extends TestCase
@@ -15,45 +16,51 @@ final class TranslationCatalogValidatorTest extends TestCase
         $this->validator = new TranslationCatalogValidator;
     }
 
-    public function test_matching_placeholders_are_valid(): void
+    #[DataProvider('validPlaceholderTranslations')]
+    public function test_valid_placeholder_translations_are_accepted(string $source, string $translation): void
     {
         $errors = $this->validator->validatePlaceholders(
-            ['By %s' => 'By %s'],
-            ['By %s' => 'Por %s'],
+            [$source => $source],
+            [$source => $translation],
         );
 
         self::assertSame([], $errors);
     }
 
-    public function test_positional_placeholders_can_be_reordered(): void
+    public static function validPlaceholderTranslations(): array
     {
-        $errors = $this->validator->validatePlaceholders(
-            ['%s signed %d documents' => '%s signed %d documents'],
-            ['%s signed %d documents' => '%2$d documentos assinados por %1$s'],
-        );
-
-        self::assertSame([], $errors);
+        return [
+            'single string' => ['By %s', 'Por %s'],
+            'reordered positional placeholders' => [
+                '%s signed %d documents',
+                '%2$d documentos assinados por %1$s',
+            ],
+            'integer width' => ['Item %02d', 'Item %02d'],
+            'float precision' => ['Total %.2f', 'Total %.2f'],
+            'escaped percent' => ['Progress: 100%% for %s', 'Progresso: 100%% para %s'],
+        ];
     }
 
-    public function test_missing_placeholder_is_reported(): void
+    #[DataProvider('invalidPlaceholderTranslations')]
+    public function test_placeholder_mismatches_are_reported(string $source, string $translation): void
     {
         $errors = $this->validator->validatePlaceholders(
-            ['By %s' => 'By %s'],
-            ['By %s' => 'Por'],
+            [$source => $source],
+            [$source => $translation],
         );
 
         self::assertCount(1, $errors);
         self::assertStringContainsString('Placeholder mismatch', $errors[0]);
     }
 
-    public function test_escaped_percent_is_not_a_placeholder(): void
+    public static function invalidPlaceholderTranslations(): array
     {
-        $errors = $this->validator->validatePlaceholders(
-            ['Progress: 100%% for %s' => 'Progress: 100%% for %s'],
-            ['Progress: 100%% for %s' => 'Progresso: 100%% para %s'],
-        );
-
-        self::assertSame([], $errors);
+        return [
+            'missing placeholder' => ['By %s', 'Por'],
+            'wrong placeholder type' => ['Count: %d', 'Contagem: %s'],
+            'extra placeholder' => ['Hello', 'Olá %s'],
+            'missing one of multiple placeholders' => ['%s has %d files', '%s tem arquivos'],
+        ];
     }
 
     public function test_missing_and_extra_translation_keys_are_not_policy_errors(): void

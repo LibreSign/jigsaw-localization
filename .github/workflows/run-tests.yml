@@ -12,41 +12,17 @@ permissions:
 
 jobs:
   test:
+    name: P${{ matrix.php }} - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            php: '8.2'
-            stability: prefer-lowest
-          - os: ubuntu-latest
-            php: '8.2'
-            stability: prefer-stable
-          - os: ubuntu-latest
-            php: '8.3'
-            stability: prefer-stable
-          - os: ubuntu-latest
-            php: '8.4'
-            stability: prefer-stable
-          - os: ubuntu-latest
-            php: '8.5'
-            stability: prefer-stable
-          - os: windows-latest
-            php: '8.2'
-            stability: prefer-stable
-          - os: windows-latest
-            php: '8.4'
-            stability: prefer-stable
-          - os: windows-latest
-            php: '8.5'
-            stability: prefer-stable
-
-    name: P${{ matrix.php }} - ${{ matrix.stability }} - ${{ matrix.os }}
+        os: [ubuntu-latest, windows-latest]
+        php: ['8.2', '8.3', '8.4', '8.5']
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
@@ -58,16 +34,32 @@ jobs:
       - name: Validate Composer metadata
         run: composer validate --strict
 
-      - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+      - name: Install locked dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
         run: vendor/bin/phpunit
 
-      - name: Export Composer lockfile for CI reproducibility
-        if: matrix.os == 'ubuntu-latest' && matrix.php == '8.2' && matrix.stability == 'prefer-stable'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+  lowest-dependencies:
+    name: P8.2 - prefer-lowest - ubuntu-latest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
-          name: composer-lock
-          path: composer.lock
-          if-no-files-found: error
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate Composer metadata
+        run: composer validate --strict
+
+      - name: Resolve lowest supported dependencies
+        run: composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit
