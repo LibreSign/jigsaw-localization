@@ -12,17 +12,9 @@ final class ExtractedString
         private ?int $line = null,
         private ?string $context = null,
     ) {
-        if ($text === '') {
-            throw new InvalidArgumentException('Extracted translation text cannot be empty.');
-        }
-
-        if ($source === '') {
-            throw new InvalidArgumentException('Extracted translation source cannot be empty.');
-        }
-
-        if ($line !== null && $line < 1) {
-            throw new InvalidArgumentException('The source line must be greater than zero.');
-        }
+        $this->assertNotEmpty($text, 'Extracted translation text cannot be empty.');
+        $this->assertNotEmpty($source, 'Extracted translation source cannot be empty.');
+        $this->assertValidLine($line);
     }
 
     public function text(): string
@@ -43,5 +35,19 @@ final class ExtractedString
     public function context(): ?string
     {
         return $this->context;
+    }
+
+    private function assertNotEmpty(string $value, string $message): void
+    {
+        if ($value === '') {
+            throw new InvalidArgumentException($message);
+        }
+    }
+
+    private function assertValidLine(?int $line): void
+    {
+        if (($line ?? 1) < 1) {
+            throw new InvalidArgumentException('The source line must be greater than zero.');
+        }
     }
 }

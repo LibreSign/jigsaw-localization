@@ -32,18 +32,16 @@ final class TranslationCatalogLocator
 
     private function assertPathSegment(string $value, string $name): void
     {
-        if (
-            $value === ''
-            || $value === '.'
-            || $value === '..'
-            || str_contains($value, '/')
-            || str_contains($value, '\\')
-            || str_contains($value, "\0")
-        ) {
+        if ($this->isUnsafePathSegment($value)) {
             throw new InvalidArgumentException(sprintf(
                 'The translation %s must be a single safe path segment.',
                 $name,
             ));
         }
+    }
+
+    private function isUnsafePathSegment(string $value): bool
+    {
+        return preg_match('/^(?:|\.\.?)$|[\/\\\\\x00]/', $value) === 1;
     }
 }

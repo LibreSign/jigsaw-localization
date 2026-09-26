@@ -4,6 +4,7 @@ namespace Tests\Unit\Extraction;
 
 use ElaborateCode\JigsawLocalization\Extraction\ExtractedString;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ExtractedStringTest extends TestCase
@@ -18,17 +19,35 @@ final class ExtractedStringTest extends TestCase
         self::assertSame('hero', $string->context());
     }
 
-    public function test_empty_text_is_rejected(): void
+    #[DataProvider('emptyRequiredValues')]
+    public function test_required_values_cannot_be_empty(string $text, string $source): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new ExtractedString('', 'home.blade.php');
+        new ExtractedString($text, $source);
     }
 
-    public function test_invalid_line_is_rejected(): void
+    public static function emptyRequiredValues(): array
+    {
+        return [
+            'text' => ['', 'home.blade.php'],
+            'source' => ['Hello', ''],
+        ];
+    }
+
+    #[DataProvider('invalidLines')]
+    public function test_invalid_lines_are_rejected(int $line): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new ExtractedString('Hello', 'home.blade.php', 0);
+        new ExtractedString('Hello', 'home.blade.php', $line);
+    }
+
+    public static function invalidLines(): array
+    {
+        return [
+            'zero' => [0],
+            'negative' => [-1],
+        ];
     }
 }
