@@ -28,10 +28,10 @@ function __($page, string $text, ?string $current_locale = null): string
  */
 function current_path_locale($page): string
 {
-    return new LocalePathResolver(
+    return (new LocalePathResolver(
         packageDefaultLocale($page),
         $page->localization->keys()->all(),
-    )->currentLocale($page->getPath());
+    ))->currentLocale($page->getPath());
 }
 
 /**
@@ -41,10 +41,10 @@ function current_path_locale($page): string
  */
 function translate_path($page, ?string $target_locale = null): string
 {
-    return new LocalePathResolver(
+    return (new LocalePathResolver(
         packageDefaultLocale($page),
         $page->localization->keys()->all(),
-    )->translate($page->getPath(), $target_locale);
+    ))->translate($page->getPath(), $target_locale);
 }
 /**
  * @param  mixed  $page
@@ -66,10 +66,10 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
 {
     $target_locale ??= current_path_locale($page);
 
-    return new LocalePathResolver(
+    return (new LocalePathResolver(
         packageDefaultLocale($page),
         $page->localization->keys()->all(),
-    )->localize($partial_path, $target_locale);
+    ))->localize($partial_path, $target_locale);
 }
 
 /**
