@@ -30,6 +30,7 @@ final class JsonDirectoryLoader implements LocalizationLoader
         foreach ($this->localeDirectories() as $locale => $directory) {
             if (strcasecmp($locale, 'multi') === 0) {
                 $this->loadMultiDirectory($directory, $localization);
+
                 continue;
             }
 
