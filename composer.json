@@ -38,11 +38,10 @@
         }
     },
     "scripts": {
-        "bin": "echo 'bin not installed'",
         "analyse": "vendor/bin/phpstan analyse --no-progress",
         "test": "vendor/bin/phpunit --colors=always",
         "format": "vendor/bin/pint",
-        "validate": [
+        "ci": [
             "@test",
             "@analyse",
             "vendor/bin/pint --test"

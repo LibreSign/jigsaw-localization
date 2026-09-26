@@ -22,7 +22,7 @@ final class JsonTranslationCatalog
      */
     public function read(): array
     {
-        if (! is_file($this->path)) {
+        if (!is_file($this->path)) {
             return [];
         }
 
@@ -37,12 +37,12 @@ final class JsonTranslationCatalog
             throw new RuntimeException("Invalid JSON translation catalog: {$this->path}", 0, $exception);
         }
 
-        if (! is_array($decoded)) {
+        if (!is_array($decoded)) {
             throw new RuntimeException("Translation catalog must contain a JSON object: {$this->path}");
         }
 
         foreach ($decoded as $key => $value) {
-            if (! is_string($key) || ! is_string($value)) {
+            if (!is_string($key) || !is_string($value)) {
                 throw new RuntimeException("Translation catalog must contain only string keys and string values: {$this->path}");
             }
         }
@@ -62,7 +62,7 @@ final class JsonTranslationCatalog
         ksort($translations);
 
         $directory = dirname($this->path);
-        if (! is_dir($directory) && ! mkdir($directory, 0755, true) && ! is_dir($directory)) {
+        if (!is_dir($directory) && !mkdir($directory, 0755, true) && !is_dir($directory)) {
             throw new RuntimeException("Unable to create translation catalog directory: {$directory}");
         }
 

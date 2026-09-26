@@ -21,7 +21,7 @@ final class TranslationCatalogValidator
         $errors = [];
 
         foreach ($translation as $key => $translatedText) {
-            if (! array_key_exists($key, $source)) {
+            if (!array_key_exists($key, $source)) {
                 continue;
             }
 
@@ -68,6 +68,8 @@ final class TranslationCatalogValidator
      */
     private function placeholders(string $text): array
     {
+        $text = str_replace('%%', '', $text);
+
         preg_match_all(
             "/%(?!%)(?:(?<position>\\d+)\\$)?[-+0' #]*(?:\\d+)?(?:\\.\\d+)?(?<type>[bcdeEfFgGosuxX])/",
             $text,

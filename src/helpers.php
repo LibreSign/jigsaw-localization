@@ -70,7 +70,7 @@ function translate_path($page, ?string $target_locale = null): string
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 
-    return ! empty($match) ? $match : '/';
+    return !empty($match) ? $match : '/';
 }
 
 /**
@@ -104,7 +104,7 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
         default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
     };
 
-    return ! empty($match) ? $match : '/';
+    return !empty($match) ? $match : '/';
 }
 
 /**
