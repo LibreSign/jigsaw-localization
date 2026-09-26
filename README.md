@@ -1,346 +1,70 @@
-# Jigsaw localization
+# Jigsaw Localization
 
-![Packagist Version](https://img.shields.io/packagist/v/elaborate-code/jigsaw-localization?label=Version&style=plastic)
-![Packagist Downloads](https://img.shields.io/packagist/dt/elaborate-code/jigsaw-localization?label=Downloads&style=plastic)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/elaborate-code/jigsaw-localization/run-tests?label=Tests)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/elaborate-code/jigsaw-localization/Fix%20PHP%20code%20style%20issues?label=Code%20Style)
+[![Tests](https://github.com/LibreSign/jigsaw-localization/actions/workflows/run-tests.yml/badge.svg)](https://github.com/LibreSign/jigsaw-localization/actions/workflows/run-tests.yml)
+[![PHPStan](https://github.com/LibreSign/jigsaw-localization/actions/workflows/phpstan.yml/badge.svg)](https://github.com/LibreSign/jigsaw-localization/actions/workflows/phpstan.yml)
+[![Packagist](https://img.shields.io/packagist/v/elaborate-code/jigsaw-localization)](https://packagist.org/packages/elaborate-code/jigsaw-localization)
 
-![banner](https://banners.beyondco.de/Jigsaw%20Localization.png?theme=dark&packageManager=composer+require&packageName=elaborate-code%2Fjigsaw-localization&pattern=jigsaw&style=style_1&description=Brings+localization+feature+to+%22tightenco%2Fjigsaw%22+using+JSON+files&md=1&showWatermark=0&fontSize=100px&images=globe)
+Localization support for [Jigsaw](https://jigsaw.tighten.com/) using JSON translation catalogs.
 
-This package is built on top of [PHP JSON tongue](https://github.com/elaborate-code/php-json-tongue) to bring localization feature to [tightenco/jigsaw](https://jigsaw.tighten.com/) using JSON files.
+The package provides:
 
-## Get started
+- JSON translation loading for Jigsaw;
+- locale-aware path and URL helpers;
+- source-string collection and extraction;
+- deterministic catalog read/write operations;
+- translation catalog synchronization and validation.
 
-### Requirements
+## Installation
 
-- PHP 8.3 or higher.
-
-### Setup
-
-Install the package using composer:
-
-```text
+```bash
 composer require elaborate-code/jigsaw-localization
 ```
 
-Plug `LoadLocalization` to the builder by registering it in `bootstrap.php`:
+Register the localization loader in `bootstrap.php`:
 
 ```php
-<?php
-
-// bootstrap.php
-
 use ElaborateCode\JigsawLocalization\LoadLocalization;
 
 $events->beforeBuild([LoadLocalization::class]);
 ```
 
-### Simple usage
+By default, translation catalogs are loaded from `/lang`.
 
-#### Defining Translation Strings
+## Translation catalogs
 
-1. Create a `lang` folder in the root of your project.
-2. Create subfolders for each language/locale.
-3. Populate the subfolders with JSON files that hold translations using the `original text` as a `key`, and the `translation` as a `value`.
-
-File structure example:
-
-![example](https://raw.githubusercontent.com/elaborate-code/php-json-tongue/main/illustration.png)
-
-#### Retrieving Translation Strings
-
-Source example:
-
-```php
-<h2> {{ __($page, "Good morning", 'en') }} </h2>
-
-<h2> {{ __($page, "programmer", 'es') }} </h2>
-
-<h2> {{ __($page, "Good morning", 'fr') }} </h2>
-```
-
-The output:
-
-```html
-<h2> Good morning </h2>
-
-<h2> programador </h2>
-
-<h2> Bonjour </h2>
-```
-
-#### Locale code format
-
-`two or three lowercase letters` for the language code + **optionally** `a dash (-) with two uppercase letters` for the region code. For example, all the following codes `ar`, `es`, `fr-CA`, `haw-US` are considered valid.
-
-- [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) or [ISO 639-2](https://www.loc.gov/standards/iso639-2/php/English_list.php) for language codes.
-- [ISO 3166](https://www.iso.org/obp/ui/#search) for region codes.
-
-## The multi folder
-
-For organizational purpose you can group internationalized translations in one JSON using many `locale` keys.
+Create one directory per locale:
 
 ```text
-/lang
-    ...
-    /multi
-        greetings.json
-        projects_short_descriptions.json
-        ...
+lang/
+├── en/
+│   └── main.json
+├── es/
+│   └── main.json
+└── pt-BR/
+    └── main.json
 ```
 
-`greetings.json` example:
+Each catalog is a flat JSON object whose keys are source strings:
 
 ```json
 {
-    "fr": {
-        "Hello": "Salut",
-        "Goodbye": "Au revoir"
-    },
-    "es": {
-        "Hello": "Hola",
-        "Goodbye": "Adiós"
-    }
+    "Good morning": "Bom dia",
+    "Sign document": "Assinar documento"
 }
 ```
 
-> First level keys must be locale codes!
+The source locale can use the source text as both key and value:
 
-## Using folder structure for locale code prefix
-
-### The default locale
-
-First you need to define `defaultLocale` in `config.php`. If not set, the package will take `en` as a default.
-
-```php
-<?php
-
-// config.php
-
-return [
-    // ...
-    'defaultLocale' => 'es',
-    // ...
-];
+```json
+{
+    "Good morning": "Good morning",
+    "Sign document": "Sign document"
+}
 ```
 
-### The translation helper
-
-If you call the `__` helper without providing a `locale` parameter, it will try to resolve it from the page path.
-
-```php
-echo __($page, $text);
-```
-
-> If you provide the `__` helper with the `locale` parameter it will proceed with it and ignore the folder structure.
-
-### The folder structure
-
-> domain.com/{locale}/path
-
-Pages that reside in the web root folder `source` are assumed to be rendered using the `defaultLocale`. Other pages that reside in **subfolders named after a locale code** have their **locale** set to the **subfolder name**
-
-```text
-/source
-    /fr
-        index.blade.php
-        contact.blade.php
-        about.blade.php
-        ...
-    /es
-        index.blade.php
-        contact.blade.php
-        about.blade.php
-        ...
-    ...
-    index.blade.php
-    contact.blade.php
-    about.blade.php
-    ...
-```
-
-## The included page trick
-
-You may find your self creating a fully coded `source/index.blade.php` and repeating the same code in `source/fr/index.blade.php` and for other locales. To avoid that we suggest the following approach:
-
-1. Create a `source/_pages` directory which will contain the master pages.
-2. A master page will look like any other ordinary page, _it will have the HTML structure and calls to `__` but no hardcoded `$current_locale` value_ .For example You may directly copy the content of `source/index.blade.php` to `source/_pages/index.blade.php`.
-3. **Include** the master page into other pages that are locale aware.
-4. The included content will be able to know which **locale** to apply on the translation helper `__` calls as a `$current_locale`.
-
-```text
-/source
-    /_pages
-        index.blade.php
-        contact.blade.php
-        ...
-    /fr
-        index.blade.php
-        contact.blade.php
-        ...
-    index.blade.php
-    contact.blade.php
-    ...
-```
-
-```php
-// Both /source/index.blade.php and /source/fr/index.blade.php
-@include('_pages.index')
-```
-
-## Helpers
-
-> IMPORTANT: All the following helpers will try to resolve the locale code from the path if needed!
-
-> Setting `baseUrl` in the **config** is essential if your site root URL isn't 'domain.com/index.html'
-
-### current_path_locale
-
-Returns the **current page locale** deduced from its path.
-
-```php
-current_path_locale($page) // ar | es | fr-CA | haw-US
-```
-
-Usage example:
-
-```php
-<!DOCTYPE html>
-<html lang="{{ current_path_locale($page) }}">
-    <head>
-    <!-- ... -->
-```
-
-### translate_path
-
-When you have a page that is available in many locales. `translate_path` helps you get the equivalent translated `path`.
-
-```php
-translate_path($page, $target_locale)
-```
-
-input/output examples:
-
-| current path  | translated path  | current_locale to target_locale |
-| ------------- | ---------------- | ------------------------------- |
-| "/"           | "/fr"            | default -> fr                   |
-| "/contact"    | "/fr/contact"    | default -> fr                   |
-| "/fr"         | "/"              | fr -> default                   |
-| "/fr/contact" | "/contact"       | fr -> default                   |
-| "/es/contact" | "/fr-CA/contact" | es -> fr-CA                     |
-| "/es"         | "/fr-CA"         | es -> fr-CA                     |
-
-Usage example:
-
-```php
-<nav>
-    @foreach(['en', 'es', 'fr'] as $locale)
-        <a href="{{ translate_path($page, $locale) }}"> {{ $locale }} </a>
-    @endforeach
-</nav>
-```
-
-### translate_url
-
-Just like the `translate_path` helper, but it prepends the `baseUrl` if set in the config.
-
-```php
-translate_url($page, $target_locale)
-```
-
-### locale_path
-
-To avoid hard coding the `current_locale` into `paths`, input only the partial path that comes after the `locale code` part into this helper and it will handle the rest for you.
-
-```php
-locale_path($page, $partial_path)
-```
-
-| $partial_path | current_locale | href          |
-| ------------- | -------------- | ------------- |
-| "/"           | DEFAULT        | "/"           |
-| "/"           | "fr"           | "/fr"         |
-| "/contact"    | DEFAULT        | "/contact"    |
-| "/contact"    | "fr"           | "/fr/contact" |
-
-### locale_url
-
-Just like the `locale_path` helper, but it prepends the `baseUrl` if set in the config.
-
-```php
-locale_url($page, $partial_path)
-```
-
-## Live test
-
-Wanna see a project that is up and running with this library? checkout this [repo](https://github.com/elaborate-code/it-company-website)
-
-## TODO
-
-- Test behavior with non A-Z languages.
-- Add a router with named routes
-  - Allow custom route patterns (for example set /blog/{locale}/)
-
-## Contributing
-
-Any help is very welcomed, feel free to fork and PR :)
-
-
-## Working with translation catalogs
-
-The package also provides small, tool-agnostic building blocks for projects that need to collect, persist, or validate JSON translation catalogs. These APIs do not require any translation service and work equally well with manually maintained files or external localization tools.
-
-### Collecting canonical source strings
-
-```php
-use ElaborateCode\JigsawLocalization\Catalog\SourceStringCollector;
-
-$collector = new SourceStringCollector('en');
-
-$collector->collect('en', 'Hello');
-$collector->collect('pt-BR', 'Olá'); // ignored because it is not the source locale
-
-$sourceStrings = $collector->all();
-// ['Hello' => 'Hello']
-```
-
-The collector only accepts strings from the configured source locale, deduplicates them, and returns a deterministic, sorted source catalog.
-
-### Reading and writing JSON catalogs
-
-```php
-use ElaborateCode\JigsawLocalization\Catalog\JsonTranslationCatalog;
-
-$catalog = new JsonTranslationCatalog('lang/en/main.json');
-
-$catalog->write([
-    'Hello' => 'Hello',
-    'Goodbye' => 'Goodbye',
-]);
-
-$translations = $catalog->read();
-```
-
-Writes are deterministic, preserve Unicode and slashes, use pretty-printed JSON, and avoid rewriting an unchanged file.
-
-### Validating translation placeholders
-
-```php
-use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogValidator;
-
-$validator = new TranslationCatalogValidator();
-
-$errors = $validator->validatePlaceholders(
-    ['%s signed %d documents' => '%s signed %d documents'],
-    ['%s signed %d documents' => '%2$d documents signed by %1$s'],
-);
-```
-
-Positional printf placeholders are supported, so translators can safely reorder arguments. Missing and additional translation keys are intentionally left to project policy.
+Translation files can be maintained manually or generated by any localization workflow.
 
 ### Custom translation directory
-
-The default `LoadLocalization` behavior remains unchanged and loads `/lang`. Projects can now point it at another directory:
 
 ```php
 use ElaborateCode\JigsawLocalization\LoadLocalization;
@@ -349,21 +73,107 @@ $loader = new LoadLocalization('/path/to/translations');
 $translations = $loader->load();
 ```
 
-When registered as a Jigsaw listener, the default usage remains backward compatible:
+## Default locale
+
+Set `defaultLocale` in Jigsaw's configuration:
 
 ```php
-$events->beforeBuild([LoadLocalization::class]);
+return [
+    'defaultLocale' => 'en',
+];
 ```
 
+If omitted, the default locale is `en`.
 
-### Extracting source strings
+Locales are resolved from the locales actually loaded into the project. The package does not impose a fixed locale naming convention.
 
-Extraction is split into two layers:
+## Translating strings
 
-1. a `TranslationSource` describes where content came from and which locale it belongs to;
-2. one or more `TranslationStringExtractor` implementations know how to find strings inside that source.
+Use the `__` helper to retrieve a translation:
 
-The `ExtractionPipeline` owns the source-locale boundary. Sources from any other locale are ignored before an extractor is invoked, which prevents translated content from being fed back into the canonical source catalog.
+```php
+echo __($page, 'Good morning');
+```
+
+Pass a locale explicitly when needed:
+
+```php
+echo __($page, 'Good morning', 'pt-BR');
+```
+
+When no locale is provided, the package resolves it from the current page path and falls back to the configured default locale.
+
+## Locale-aware paths and URLs
+
+### `current_path_locale()`
+
+Returns the locale resolved for the current page:
+
+```php
+$currentLocale = current_path_locale($page);
+```
+
+### `translate_path()`
+
+Returns the equivalent page path for another locale:
+
+```php
+translate_path($page, 'fr');
+```
+
+| Current path | Target locale | Result |
+| --- | --- | --- |
+| `/contact` | `fr` | `/fr/contact` |
+| `/fr/contact` | `en` | `/contact` |
+| `/es/contact` | `fr-CA` | `/fr-CA/contact` |
+
+### `translate_url()`
+
+Equivalent to `translate_path()`, but returns a URL using Jigsaw's configured base URL:
+
+```php
+translate_url($page, 'fr');
+```
+
+### `locale_path()`
+
+Builds a path for the current locale:
+
+```php
+locale_path($page, '/contact');
+```
+
+### `locale_url()`
+
+Equivalent to `locale_path()`, but returns a URL:
+
+```php
+locale_url($page, '/contact');
+```
+
+## Source-string collection
+
+For runtime collection, use `SourceStringCollector`:
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\SourceStringCollector;
+
+$collector = new SourceStringCollector('en');
+
+$collector->collect('en', 'Hello');
+$collector->collect('pt-BR', 'Olá');
+
+$sourceStrings = $collector->all();
+// ['Hello' => 'Hello']
+```
+
+Only strings from the configured source locale are collected.
+
+## Source extraction
+
+Extraction is based on a generic source/extractor contract.
+
+A `TranslationSource` identifies the locale, source and contents to inspect. A `TranslationStringExtractor` implementation decides how strings are found inside that source.
 
 ```php
 use ElaborateCode\JigsawLocalization\Extraction\CallbackStringExtractor;
@@ -381,17 +191,31 @@ $catalog = $pipeline->catalog([
     new TranslationSource('en', 'posts/hello.md', 'Hello'),
     new TranslationSource('pt-BR', 'posts/ola.md', 'Olá'),
 ]);
-
-// ['Hello' => 'Hello']
 ```
 
-For reusable integrations, implement `TranslationStringExtractor` directly. The callback adapter is intended for small project-specific adapters where adding a dedicated class would add little value.
+The pipeline ignores non-source locales before invoking extractors, preventing translated content from being collected into the source catalog.
 
-An extractor may yield plain strings or `ExtractedString` instances. `ExtractedString` can retain source path, line number, and an optional context label for diagnostics without changing the catalog format.
+For reusable extraction logic, implement `TranslationStringExtractor` directly.
 
-The package intentionally does not hardcode Blade, Markdown, Weblate, Transifex, or any other translation workflow. A Jigsaw project can extract from templates during a build, statically inspect source files, consume CMS content, or combine several extractors in the same pipeline.
+## Catalog operations
 
-### Synchronizing source and translated catalogs
+### Reading and writing JSON
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\JsonTranslationCatalog;
+
+$catalog = new JsonTranslationCatalog('lang/en/main.json');
+
+$catalog->write([
+    'Good morning' => 'Good morning',
+]);
+
+$translations = $catalog->read();
+```
+
+Catalog output is deterministic and uses JSON objects with UTF-8 content.
+
+### Synchronizing catalogs
 
 ```php
 use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogSynchronizer;
@@ -403,28 +227,40 @@ $source = $synchronizer->source([
     'Goodbye',
 ]);
 
-$ptBr = $synchronizer->translation(
+$translation = $synchronizer->translation(
     $source,
-    [
-        'Hello' => 'Olá',
-        'Old key' => 'Tradução antiga',
-    ],
+    ['Hello' => 'Olá'],
 );
 ```
 
-Source catalogs are rebuilt canonically as `source text => source text`. Translation catalogs preserve existing translations and obsolete keys by default. New source keys receive the source text as a fallback.
+Existing translations are preserved. New source keys use the source text as fallback.
 
-Removing obsolete translation keys is an explicit project decision:
+Obsolete translated keys are preserved by default. Pruning must be requested explicitly:
 
 ```php
-$ptBr = $synchronizer->translation($source, $ptBr, pruneObsolete: true);
+$translation = $synchronizer->translation(
+    $source,
+    $translation,
+    pruneObsolete: true,
+);
 ```
 
-This distinction is intentional: rebuilding the source catalog and pruning translated catalogs are different operations with different data-loss risks.
+### Validating placeholders
+
+```php
+use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogValidator;
+
+$validator = new TranslationCatalogValidator();
+
+$errors = $validator->validatePlaceholders(
+    ['%s signed %d documents' => '%s signed %d documents'],
+    ['%s signed %d documents' => '%2$d documents signed by %1$s'],
+);
+```
+
+The validator supports positional `printf`/`vsprintf` placeholders so arguments can be reordered safely in translated text.
 
 ### Safe catalog paths
-
-`TranslationCatalogLocator` builds catalog file paths while rejecting directory traversal and nested path segments. It does not enforce a particular locale standard, so projects may use names such as `pt-BR`, `zh_Hant_TW`, or their own locale convention.
 
 ```php
 use ElaborateCode\JigsawLocalization\Catalog\TranslationCatalogLocator;
@@ -435,3 +271,4 @@ $sourcePath = $locator->path('en');
 $messagesPath = $locator->path('pt-BR', 'messages');
 ```
 
+The locator rejects unsafe path segments while leaving locale naming policy to the project.
