@@ -21,7 +21,8 @@
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
-        "tightenco/jigsaw": "^1.7"
+        "tightenco/jigsaw": "^1.7",
+        "phpmd/phpmd": "^2.15"
     },
     "autoload": {
         "files": [
@@ -44,8 +45,10 @@
         "ci": [
             "@test",
             "@analyse",
+            "@complexity",
             "vendor/bin/pint --test"
-        ]
+        ],
+        "complexity": "vendor/bin/phpmd src text phpmd.xml"
     },
     "config": {
         "sort-packages": true,

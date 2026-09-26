@@ -1,0 +1,46 @@
+name: Refresh development locks
+
+on:
+  push:
+    branches:
+      - feat/translation-catalog-foundation
+
+permissions:
+  contents: write
+
+jobs:
+  lock:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/translation-catalog-foundation
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Refresh root and tool lockfiles
+        shell: bash
+        run: |
+          composer update phpmd/phpmd --with-all-dependencies --prefer-stable --prefer-dist --no-interaction --no-progress
+          composer --working-dir=vendor-bin/phpunit update --prefer-stable --prefer-dist --no-interaction --no-progress
+          composer --working-dir=vendor-bin/pint update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Commit lockfiles
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add composer.lock vendor-bin/phpunit/composer.lock vendor-bin/pint/composer.lock
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit --signoff -m "chore: refresh development lockfiles"
+          git push
