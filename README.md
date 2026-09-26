@@ -73,6 +73,27 @@ $loader = new LoadLocalization('/path/to/translations');
 $translations = $loader->load();
 ```
 
+### Custom localization loader
+
+Projects that store translations somewhere other than JSON files can implement `LocalizationLoader` and inject it into the Jigsaw listener:
+
+```php
+use ElaborateCode\JigsawLocalization\Contracts\LocalizationLoader;
+use ElaborateCode\JigsawLocalization\LoadLocalization;
+
+$loader = new class implements LocalizationLoader {
+    public function load(): array
+    {
+        return [
+            'en' => ['Hello' => 'Hello'],
+        ];
+    }
+};
+
+$localization = new LoadLocalization(loader: $loader);
+```
+
+
 ## Default locale
 
 Set `defaultLocale` in Jigsaw's configuration:
