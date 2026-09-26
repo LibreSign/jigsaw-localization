@@ -11,7 +11,6 @@
     ],
     "require": {
         "php": "^8.3",
-        "elaborate-code/php-json-tongue": "^1.0",
         "symfony/intl": "^6.0|^7.0|^8.0"
     },
     "require-dev": {

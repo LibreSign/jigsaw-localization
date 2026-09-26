@@ -2,12 +2,20 @@
 
 namespace ElaborateCode\JigsawLocalization;
 
-use ElaborateCode\JsonTongue\TongueFacade;
+use ElaborateCode\JigsawLocalization\Contracts\LocalizationLoader;
+use ElaborateCode\JigsawLocalization\Loader\JsonDirectoryLoader;
 use TightenCo\Jigsaw\Jigsaw;
 
 class LoadLocalization
 {
-    public function __construct(private string $path = '/lang') {}
+    private LocalizationLoader $loader;
+
+    public function __construct(
+        string $path = '/lang',
+        ?LocalizationLoader $loader = null,
+    ) {
+        $this->loader = $loader ?? new JsonDirectoryLoader($path);
+    }
 
     public function handle(Jigsaw $jigsaw): void
     {
@@ -19,6 +27,6 @@ class LoadLocalization
      */
     public function load(): array
     {
-        return (new TongueFacade($this->path))->transcribe();
+        return $this->loader->load();
     }
 }
