@@ -15,7 +15,7 @@ final class PlaceholderExtractor
         $text = str_replace('%%', '', $text);
 
         preg_match_all(
-            "/%(?!%)(?:(?<position>\\d+)\\$)?[-+0' #]*(?:\\d+)?(?:\.\\d+)?(?<type>[bcdeEfFgGosuxX])/",
+            "/%(?!%)(?:(?<position>\\d+)\\$)?[-+0'#]*(?:\\d+)?(?:\.\\d+)?(?<type>[bcdeEfFgGosuxX])/",
             $text,
             $matches,
             PREG_SET_ORDER,
