@@ -1,16 +1,32 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization;
+namespace LibreSign\JigsawLocalization;
 
-use ElaborateCode\JsonTongue\TongueFacade;
+use LibreSign\JigsawLocalization\Contracts\LocalizationLoader;
+use LibreSign\JigsawLocalization\Loader\JsonDirectoryLoader;
 use TightenCo\Jigsaw\Jigsaw;
 
 class LoadLocalization
 {
-    public function handle(Jigsaw $jigsaw)
-    {
-        $tongue = new TongueFacade('/lang');
+    private LocalizationLoader $loader;
 
-        $jigsaw->setConfig('localization', $tongue->transcribe());
+    public function __construct(
+        string $path = '/lang',
+        ?LocalizationLoader $loader = null,
+    ) {
+        $this->loader = $loader ?? new JsonDirectoryLoader($path);
+    }
+
+    public function handle(Jigsaw $jigsaw): void
+    {
+        $jigsaw->setConfig('localization', $this->load());
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function load(): array
+    {
+        return $this->loader->load();
     }
 }

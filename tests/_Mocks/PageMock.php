@@ -1,16 +1,23 @@
 <?php
 
-namespace ElaborateCode\JigsawLocalization\Mocks;
+namespace LibreSign\JigsawLocalization\Mocks;
 
 use Exception;
+use Illuminate\Support\Collection;
 
 class PageMock
 {
     protected string $path = '';
 
-    public string $defaultLocale;
+    public string $defaultLocale = 'en';
 
-    public array $localization = [];
+    /** @var Collection<string, array<string, string>> */
+    public Collection $localization;
+
+    public function __construct()
+    {
+        $this->localization = collect();
+    }
 
     public function setPath(string $path): static
     {
@@ -19,9 +26,12 @@ class PageMock
         return $this;
     }
 
+    /**
+     * @param  array<string, array<string, string>>  $localization
+     */
     public function setLocalization(array $localization): static
     {
-        $this->localization = $localization;
+        $this->localization = collect($localization);
 
         return $this;
     }

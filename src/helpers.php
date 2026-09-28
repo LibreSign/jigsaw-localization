@@ -1,6 +1,8 @@
 <?php
 
-use Symfony\Component\Intl\Locales;
+use LibreSign\JigsawLocalization\Locale\AvailableLocaleMap;
+use LibreSign\JigsawLocalization\Locale\LocaleNameResolver;
+use LibreSign\JigsawLocalization\Locale\LocalePathResolver;
 
 /**
  * @see https://www.w3.org/International/articles/language-tags/
@@ -27,23 +29,10 @@ function __($page, string $text, ?string $current_locale = null): string
  */
 function current_path_locale($page): string
 {
-    $path = trim($page->getPath(), '/');
-
-    /**
-     * - [a-z]{2,3} language code
-     * - [A-Z]{2} region code
-     *
-     * @var string $locale_regex
-     */
-    $locale_regex = '/^(?<locale>(?:[a-z]{2,3}-[A-Z]{2})|(?:[a-z]{2,3}))(?:[^a-zA-Z]|$)/';
-
-    preg_match($locale_regex, $path, $matches);
-
-    if (isset($matches['locale']) && $page->localization->has($matches['locale'])) {
-        return $matches['locale'];
-    }
-
-    return packageDefaultLocale();
+    return (new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    ))->currentLocale($page->getPath());
 }
 
 /**
@@ -53,26 +42,11 @@ function current_path_locale($page): string
  */
 function translate_path($page, ?string $target_locale = null): string
 {
-    $target_locale ??= packageDefaultLocale();
-
-    $current_locale = current_path_locale($page);
-
-    $partial_path = (string) match (true) {
-        $current_locale === packageDefaultLocale($page) => $page->getPath(),
-        default => substr($page->getPath(), strlen($current_locale) + 1),
-    };
-    if ($partial_path === '/') {
-        $partial_path = '';
-    }
-
-    $match = match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path,
-        default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
-    };
-
-    return ! empty($match) ? $match : '/';
+    return (new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    ))->translate($page->getPath(), $target_locale);
 }
-
 /**
  * @param  mixed  $page
  * @param  ?string  $target_locale  set to the default locale if null
@@ -93,18 +67,10 @@ function locale_path($page, string $partial_path, ?string $target_locale = null)
 {
     $target_locale ??= current_path_locale($page);
 
-    $partial_path = '/'.ltrim($partial_path, '/');
-    $partial_path = preg_replace("/^\/$target_locale\//", '/', $partial_path);
-    if ($partial_path === '/') {
-        $partial_path = '';
-    }
-
-    $match = match (true) {
-        $target_locale === packageDefaultLocale($page) => $partial_path,
-        default => "/{$target_locale}".($partial_path === '/' ? '' : $partial_path),
-    };
-
-    return ! empty($match) ? $match : '/';
+    return (new LocalePathResolver(
+        packageDefaultLocale($page),
+        $page->localization->keys()->all(),
+    ))->localize($partial_path, $target_locale);
 }
 
 /**
@@ -131,31 +97,18 @@ function packageDefaultLocale($page = null): string
  * Site-level overrides can be provided via a `localeNames` config key.
  *
  * @param  mixed  $page
- * @return array<string, string>  locale code => display name
+ * @return array<string, string> locale code => display name
  */
 function locale_names($page): array
 {
-    if (isset($page->localeNames) && is_array($page->localeNames)) {
-        return $page->localeNames;
-    }
+    $overrides = is_array($page->localeNames ?? null)
+        ? $page->localeNames
+        : null;
 
-    return $page->localization->keys()
-        ->mapWithKeys(function ($locale) {
-            // Symfony\Component\Intl\Locales requires the PHP intl extension.
-            // Fall back to the raw locale code when the extension is not loaded.
-            if (!extension_loaded('intl')) {
-                return [$locale => $locale];
-            }
-
-            // Symfony\Component\Intl\Locales uses underscores (BCP 47 with underscore)
-            $icu = str_replace('-', '_', $locale);
-            $name = Locales::exists($icu)
-                ? Locales::getName($icu, $icu)
-                : $locale;
-
-            return [$locale => $name];
-        })
-        ->all();
+    return (new LocaleNameResolver)->names(
+        $page->localization->keys()->all(),
+        $overrides,
+    );
 }
 
 /**
@@ -165,18 +118,13 @@ function locale_names($page): array
  * Intended for use in navigation language selectors.
  *
  * @param  mixed  $page
- * @return array<string, string>  url key => display name
+ * @return array<string, string> url key => display name
  */
 function available_locales($page): array
 {
-    $names = locale_names($page);
-
-    return $page->localization->keys()
-        ->mapWithKeys(function ($locale) use ($page, $names) {
-            $urlKey = ($locale === packageDefaultLocale($page)) ? '' : $locale;
-            $name = $names[$locale] ?? $locale;
-
-            return [$urlKey => $name];
-        })
-        ->all();
+    return (new AvailableLocaleMap)->build(
+        $page->localization->keys()->all(),
+        packageDefaultLocale($page),
+        locale_names($page),
+    );
 }

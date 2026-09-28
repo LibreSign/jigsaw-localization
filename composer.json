@@ -1,25 +1,26 @@
 {
-    "name": "elaborate-code/jigsaw-localization",
-    "description": "Brings localization feature to \"tightenco/jigsaw\" using JSON files",
+    "name": "libresign/jigsaw-localization",
+    "description": "Localization and translation toolkit for Tighten Jigsaw with JSON catalogs, extraction, validation, and locale-aware routing",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Mohamed Ilies BOUDOUMA",
-            "email": "medilies.contact@gmail.com"
+            "email": "medilies.contact@gmail.com",
+            "role": "Original author"
+        },
+        {
+            "name": "LibreSign",
+            "homepage": "https://libresign.coop",
+            "role": "Maintainer"
         }
     ],
     "require": {
-        "php": "^8.0",
-        "elaborate-code/php-json-tongue": "^1.0",
-        "symfony/intl": "^6.0|^7.0"
+        "php": "^8.3",
+        "symfony/intl": "^6.0|^7.0|^8.0"
     },
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.8",
-        "laravel/pint": "^1.2",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
+        "bamarni/composer-bin-plugin": "^1.9",
         "tightenco/jigsaw": "^1.7"
     },
     "autoload": {
@@ -27,37 +28,56 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "ElaborateCode\\JigsawLocalization\\": "src/"
+            "LibreSign\\JigsawLocalization\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests",
-            "ElaborateCode\\JigsawLocalization\\Mocks\\": "tests/_Mocks"
+            "LibreSign\\JigsawLocalization\\Mocks\\": "tests/_Mocks"
         }
     },
     "scripts": {
-        "bin": "echo 'bin not installed'",
-        "analyse": "vendor/bin/phpstan analyse",
-        "test": "vendor/bin/phpunit  --colors=always",
-        "format": "vendor/bin/pint"
+        "analyse": "vendor-bin/phpstan/vendor/bin/phpstan analyse --no-progress",
+        "test": "vendor-bin/phpunit/vendor/bin/phpunit --colors=always",
+        "format": "vendor-bin/pint/vendor/bin/pint",
+        "ci": [
+            "@test",
+            "@analyse",
+            "@complexity",
+            "vendor-bin/pint/vendor/bin/pint --test"
+        ],
+        "complexity": "vendor-bin/phpmd/vendor/bin/phpmd src text phpmd.xml"
     },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "phpstan/extension-installer": true,
             "bamarni/composer-bin-plugin": true
         }
     },
     "extra": {
         "bamarni-bin": {
-            "bin-links": true,
+            "bin-links": false,
             "forward-command": true
         }
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "suggest": {
-        "ext-intl": "For faster locale display name resolution"
+        "ext-intl": "For locale display name resolution"
+    },
+    "keywords": [
+        "jigsaw",
+        "localization",
+        "translation",
+        "internationalization",
+        "i18n",
+        "static-site-generator",
+        "blade"
+    ],
+    "homepage": "https://github.com/LibreSign/jigsaw-localization",
+    "support": {
+        "issues": "https://github.com/LibreSign/jigsaw-localization/issues",
+        "source": "https://github.com/LibreSign/jigsaw-localization"
     }
 }
