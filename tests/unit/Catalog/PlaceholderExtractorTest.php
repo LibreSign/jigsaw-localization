@@ -26,6 +26,8 @@ final class PlaceholderExtractorTest extends TestCase
             'positional reorder' => ['%2$d files by %1$s', ['1:s', '2:d']],
             'escaped percent' => ['100%% complete for %s', ['1:s']],
             'literal percent only' => ['100%% complete', []],
+            'natural language percentage before g' => ['Growth reached 22% globally', []],
+            'natural language percentage before e' => ['Cresceu 22% e deve continuar', []],
         ];
     }
 }
